@@ -1,11 +1,15 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <stdlib.h>
+#include <time.h>
 
 #include "tilemap.hpp"
 
 int main() {
 
-    sf::RenderWindow window(sf::VideoMode(800, 600), "roguelite");
+    sf::RenderWindow window(sf::VideoMode(1280, 720), "roguelite");
+
+    srand(time(NULL));
 
     Tilemap map(100, 100);
 
@@ -21,10 +25,12 @@ int main() {
         sf::Event event;
         while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed) { window.close(); }
+
             if (event.type == sf::Event::Resized) { 
                 size = sf::Vector2f(window.getSize().x, window.getSize().y); 
                 window.setView(view);
             }
+
             if (event.type == sf::Event::MouseWheelMoved) {
                 if (event.mouseWheel.delta < 0) { 
                     zoom = zoom + 0.1f;
@@ -36,6 +42,10 @@ int main() {
                     view.setSize(size);
                     view.zoom(zoom);
                 }
+            }
+            
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Space) { map.generate_new_map(); }
             }
         }
 

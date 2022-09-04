@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
+#include <stdlib.h>
 
 class Tilemap {
 
@@ -10,6 +11,7 @@ class Tilemap {
 
         Tilemap(int w, int h);
         void draw(sf::RenderWindow* window);
+        void generate_new_map();
 
     private:
 
@@ -22,17 +24,24 @@ class Tilemap {
             int x;
             int y;
             int id = 0;
-            int cavern = 0;
+            int cavern = -1;
             sf::Text text;
-            sf::Text set_text() {
+            void set_text() {
                 text.setCharacterSize(16);
                 text.setFillColor(sf::Color::Green);
-                text.setString(std::to_string(id));
+                if (id == 1) { text.setString("X"); }
+                if (id == 0) { text.setString(" "); }
                 text.setPosition(x, y);
             };
             void set_font(sf::Font* f) { text.setFont(*f); }
         };
-
         std::vector<std::vector<tile>> tiles;
+        void set_tiles();
+
+        std::vector<std::vector<int>> cells;
+        std::vector<std::vector<int>> old_cells;
+        void set_cells();
+        void cellular_step();
+        int count_living_neighbors(int r, int c);
 
 };
