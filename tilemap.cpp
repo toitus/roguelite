@@ -4,7 +4,9 @@ Tilemap::Tilemap(int w, int h) {
     width = w;
     height = h;
 
-    if (!font.loadFromFile("content/One Crayon.ttf")) {std::cout << "Font failed to load!" << std::endl;}
+    if (!font.loadFromFile("content/One Crayon.ttf")) { std::cout << "Font failed to load!" << std::endl; }
+    if (!tilesheet.loadFromFile("content/tilesheet.png")) { std::cout << "Tilemap's tilesheet failed to load!" << std::endl; }
+    tilesheet.setSmooth(true);
 
     cells = std::vector<std::vector<int>>(width, std::vector<int>(height, 1));
     old_cells = std::vector<std::vector<int>>(width, std::vector<int>(height, 1));
@@ -30,19 +32,10 @@ void Tilemap::generate_new_map() {
     for (int i = 0; i < steps; ++i) {
         cellular_step();
     }
-    set_tiles();
+    identify_tiles();
+    identify_inner_walls();
     identify_caverns();
-}
-
-void Tilemap::set_tiles() {
-    for (int row = 0; row < height; ++row) {
-        for (int column = 0; column < width; ++column) {
-            tiles[row][column].set_position(row, column);
-            tiles[row][column].set_id(cells[row][column]);
-            if (cells[row][column] == 0) { tiles[row][column].set_cavern(0); }
-            tiles[row][column].set_font(&font);
-        }
-    }
+    identify_tile_textures();
 }
 
 void Tilemap::set_cells() {
@@ -67,17 +60,34 @@ void Tilemap::cellular_step() {
     }
 }
 
-int Tilemap::count_living_neighbors(int r, int c) {
-    int living_neighbors = 0;
-    if (old_cells[r-1][c] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c] == 1) { living_neighbors++; }
-    if (old_cells[r][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r][c+1] == 1) { living_neighbors++; }
-    if (old_cells[r-1][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c+1] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r-1][c+1] == 1) { living_neighbors++; }
-    return living_neighbors;
+void Tilemap::identify_inner_walls() {
+    for (int row = 1; row < height-1; ++row) {
+        for (int column = 1; column < width-1; ++column) {
+            if (tiles[row][column].get_id() != 0) {
+                int count = 0;
+                if (tiles[row-1][column].get_id() == 0) { count++; }
+                if (tiles[row+1][column].get_id() == 0) { count++; }
+                if (tiles[row][column-1].get_id() == 0) { count++; }
+                if (tiles[row][column+1].get_id() == 0) { count++; }
+                if (tiles[row-1][column-1].get_id() == 0) { count++; }
+                if (tiles[row+1][column+1].get_id() == 0) { count++; }
+                if (tiles[row+1][column-1].get_id() == 0) { count++; }
+                if (tiles[row-1][column+1].get_id() == 0) { count++; }
+                if (count == 0) { tiles[row][column].set_id(2); }
+            }
+        }
+    }
+}
+
+
+void Tilemap::identify_tiles() {
+    for (int row = 0; row < height; ++row) {
+        for (int column = 0; column < width; ++column) {
+            tiles[row][column].set_position(row, column);
+            tiles[row][column].set_id(cells[row][column]);
+            if (cells[row][column] == 0) { tiles[row][column].set_cavern(0); }
+        }
+    }
 }
 
 void Tilemap::identify_caverns() {
@@ -113,4 +123,27 @@ std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
     }
     cavern_count++;
     return cavern;
+}
+
+void Tilemap::identify_tile_textures() {
+    for (int row = 0; row < height; ++row) {
+        for (int column = 0; column < width; ++column) {
+            if (tiles[row][column].get_id() == 0) { tiles[row][column].set_texture(&tilesheet, floor); }
+            if (tiles[row][column].get_id() == 1) { tiles[row][column].set_texture(&tilesheet, outer_wall); }
+            if (tiles[row][column].get_id() == 2) { tiles[row][column].set_texture(&tilesheet, inner_wall); }
+        }
+    }
+}
+
+int Tilemap::count_living_neighbors(int r, int c) {
+    int living_neighbors = 0;
+    if (old_cells[r-1][c] == 1) { living_neighbors++; }
+    if (old_cells[r+1][c] == 1) { living_neighbors++; }
+    if (old_cells[r][c-1] == 1) { living_neighbors++; }
+    if (old_cells[r][c+1] == 1) { living_neighbors++; }
+    if (old_cells[r-1][c-1] == 1) { living_neighbors++; }
+    if (old_cells[r+1][c+1] == 1) { living_neighbors++; }
+    if (old_cells[r+1][c-1] == 1) { living_neighbors++; }
+    if (old_cells[r-1][c+1] == 1) { living_neighbors++; }
+    return living_neighbors;
 }
