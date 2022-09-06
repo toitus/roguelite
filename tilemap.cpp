@@ -38,6 +38,7 @@ void Tilemap::generate_new_map() {
     identify_tile_textures();
 }
 
+//initializes cells to "alive"(1) and gives them a random chance to start as "dead"(0)
 void Tilemap::set_cells() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
@@ -50,6 +51,7 @@ void Tilemap::set_cells() {
     }
 }
 
+//checks all cells minus cave border. if a cell has more than 4 "living"(1) neighbors, it is set to "dead"(0)
 void Tilemap::cellular_step() {
     old_cells = cells;
     for (int row = 1; row < height-1; ++row) {
@@ -60,6 +62,7 @@ void Tilemap::cellular_step() {
     }
 }
 
+//checks all tiles that are not floor tiles(id=0). if a tile has no floor tiles around it, it is an inner wall(id=2)
 void Tilemap::identify_inner_walls() {
     for (int row = 1; row < height-1; ++row) {
         for (int column = 1; column < width-1; ++column) {
@@ -79,7 +82,7 @@ void Tilemap::identify_inner_walls() {
     }
 }
 
-
+//checks all tiles. initializes their positions, ids, and cavern ids
 void Tilemap::identify_tiles() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
@@ -90,6 +93,7 @@ void Tilemap::identify_tiles() {
     }
 }
 
+//starts the flood-fill process for identifying each unique(unconnected) cavern in the cave
 void Tilemap::identify_caverns() {
     for (int row = 1; row < height-1; ++row) {
         for (int column = 1; column < width-1; ++column) {
@@ -100,6 +104,7 @@ void Tilemap::identify_caverns() {
     }
 }
 
+//flood-fill algorithm for populating each cavern in the caverns vector
 std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
     std::vector<sf::Vector2i> queue;
     std::vector<sf::Vector2i> cavern;
@@ -125,6 +130,7 @@ std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
     return cavern;
 }
 
+//checks all tiles. applies a texture rect for the appropriate subtexture in the tilesheet
 void Tilemap::identify_tile_textures() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
@@ -135,6 +141,7 @@ void Tilemap::identify_tile_textures() {
     }
 }
 
+//given an element at row and column, counts the "living"(1) neighbors surrounding that element
 int Tilemap::count_living_neighbors(int r, int c) {
     int living_neighbors = 0;
     if (old_cells[r-1][c] == 1) { living_neighbors++; }
