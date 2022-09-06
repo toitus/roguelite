@@ -62,6 +62,20 @@ void Tilemap::cellular_step() {
     }
 }
 
+//checks all tiles. initializes their positions, ids, and cavern ids, and whether the tile is occupied initially
+void Tilemap::identify_tiles() {
+    for (int row = 0; row < height; ++row) {
+        for (int column = 0; column < width; ++column) {
+            tiles[row][column].set_position(row, column);
+            tiles[row][column].set_id(cells[row][column]);
+            if (tiles[row][column].get_id() == 0) { 
+                tiles[row][column].set_cavern(0); 
+                tiles[row][column].set_occupied(false); 
+            }
+        }
+    }
+}
+
 //checks all tiles that are not floor tiles(id=0). if a tile has no floor tiles around it, it is an inner wall(id=2)
 void Tilemap::identify_inner_walls() {
     for (int row = 1; row < height-1; ++row) {
@@ -78,17 +92,6 @@ void Tilemap::identify_inner_walls() {
                 if (tiles[row-1][column+1].get_id() == 0) { count++; }
                 if (count == 0) { tiles[row][column].set_id(2); }
             }
-        }
-    }
-}
-
-//checks all tiles. initializes their positions, ids, and cavern ids
-void Tilemap::identify_tiles() {
-    for (int row = 0; row < height; ++row) {
-        for (int column = 0; column < width; ++column) {
-            tiles[row][column].set_position(row, column);
-            tiles[row][column].set_id(cells[row][column]);
-            if (cells[row][column] == 0) { tiles[row][column].set_cavern(0); }
         }
     }
 }
@@ -134,9 +137,12 @@ std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
 void Tilemap::identify_tile_textures() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
-            if (tiles[row][column].get_id() == 0) { tiles[row][column].set_texture(&tilesheet, floor); }
-            if (tiles[row][column].get_id() == 1) { tiles[row][column].set_texture(&tilesheet, outer_wall); }
-            if (tiles[row][column].get_id() == 2) { tiles[row][column].set_texture(&tilesheet, inner_wall); }
+            tiles[row][column].set_texture(&tilesheet); 
+            tiles[row][column].set_origin_to_center();
+            if (tiles[row][column].get_id() == 0) { tiles[row][column].set_texture_rect(floor); }
+            if (tiles[row][column].get_id() == 1) { tiles[row][column].set_texture_rect(outer_wall); }
+            if (tiles[row][column].get_id() == 2) { tiles[row][column].set_texture_rect(inner_wall); }
+            
         }
     }
 }

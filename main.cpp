@@ -13,7 +13,7 @@ int main() {
 
     Tilemap map(100, 100);
 
-    sf::Vector2f center = sf::Vector2f(0.f, 0.f);
+    sf::Vector2f center = sf::Vector2f(50.f*16.f, 50.f*16.f);
     sf::Vector2f size = sf::Vector2f(window.getSize().x, window.getSize().y);
     sf::View view(center, size);
 
@@ -27,27 +27,28 @@ int main() {
             if (event.type == sf::Event::Closed) { window.close(); }
 
             if (event.type == sf::Event::Resized) { 
-                size = sf::Vector2f(window.getSize().x, window.getSize().y); 
+                view.setSize(event.size.width, event.size.height);
+                view.zoom(zoom);
                 window.setView(view);
             }
 
             if (event.type == sf::Event::MouseWheelMoved) {
-                if (event.mouseWheel.delta < 0) { 
-                    zoom = zoom + 0.1f;
-                    view.setSize(size);
-                    view.zoom(zoom);
-                } else if (event.mouseWheel.delta > 0) {
-                    zoom = zoom - 0.1f;
-                    if (zoom < 1.0f) { zoom = 1.0f; }
-                    view.setSize(size);
-                    view.zoom(zoom);
-                }
+                sf::Vector2u size = window.getSize();
+                view.setSize(size.x, size.y);
+                zoom -= 0.3f * event.mouseWheel.delta;
+                if (zoom < 1.0f) { zoom = 1.0f; }
+                view.zoom(zoom);
             }
-            
+
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Space) { map.generate_new_map(); }
             }
+
+            //queue up player moves and set direction here..
+
         }
+
+        //do player movement here.. if map.can_movesomewhere do movement
 
         //update
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { view.move(-5.f, 0.f); }

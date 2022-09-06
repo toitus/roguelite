@@ -15,6 +15,15 @@ class Tilemap {
         void draw(sf::RenderWindow* w);
         void generate_new_map();
 
+        bool can_move_left(int r, int c) { return tiles[r][c-1].is_occupied(); }
+        bool can_move_right(int r, int c) { return tiles[r][c+1].is_occupied(); }
+        bool can_move_up(int r, int c) { return tiles[r-1][c].is_occupied(); }
+        bool can_move_down(int r, int c) { return tiles[r+1][c].is_occupied(); }
+        bool can_move_up_left(int r, int c) { return tiles[r-1][c-1].is_occupied(); }
+        bool can_move_up_right(int r, int c) { return tiles[r-1][c+1].is_occupied(); }
+        bool can_move_down_left(int r, int c) { return tiles[r+1][c-1].is_occupied(); } 
+        bool can_move_down_right(int r, int c) { return tiles[r+1][c+1].is_occupied(); }
+
     private:
 
         int width;
