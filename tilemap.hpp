@@ -28,14 +28,15 @@ class Tilemap {
 
         int width;
         int height;
+        int tilesize = 24;
         int cavern_count = 1;
 
         sf::Texture tilesheet;
         sf::Font font;
 
-        sf::IntRect floor = sf::IntRect(0, 16, 16, 16);
-        sf::IntRect outer_wall = sf::IntRect(16, 0, 16, 16);
-        sf::IntRect inner_wall = sf::IntRect(16, 16, 16, 16);
+        sf::IntRect floor = sf::IntRect(0, tilesize, tilesize, tilesize);
+        sf::IntRect outer_wall = sf::IntRect(tilesize, 0, tilesize, tilesize);
+        sf::IntRect inner_wall = sf::IntRect(tilesize, tilesize, tilesize, tilesize);
 
         std::vector<std::vector<Tile>> tiles;
         void identify_tiles();

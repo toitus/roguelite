@@ -10,7 +10,12 @@ Game::Game(sf::RenderWindow* w) {
 void Game::run() {
     while (window->isOpen()) {
         events();
-        update();
+        time_since_last_step += game_clock.restart();
+        while (time_since_last_step >= target_time_per_step) {
+            time_since_last_step -= target_time_per_step;
+            events();
+            update();
+        }
         draw();
     }
 }

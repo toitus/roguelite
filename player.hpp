@@ -14,6 +14,6 @@ class Player {
 
         int row;
         int column;
-        int size = 16;
+        int size = 24;
 
 };

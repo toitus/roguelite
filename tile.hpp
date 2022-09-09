@@ -26,7 +26,7 @@ class Tile {
 
         int row;
         int column;
-        int size = 16;
+        int size = 24;
         int id = 0;
         int cavern = -1;
 
