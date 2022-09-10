@@ -8,8 +8,6 @@ Tilemap::Tilemap(int w, int h) {
     old_cells = std::vector<std::vector<int>>(width, std::vector<int>(height, 1));
 
     tiles = std::vector<std::vector<Tile>>(width, std::vector<Tile>(height));
-
-    generate_new_map();
 }
 
 void Tilemap::draw(sf::RenderWindow* w) {
@@ -31,7 +29,6 @@ void Tilemap::generate_new_map() {
     identify_tiles();
     identify_inner_walls();
     identify_caverns();
-    identify_tile_textures();
 }
 
 //initializes cells to "alive"(1) and gives them a random chance to start as "dead"(0)
@@ -58,16 +55,21 @@ void Tilemap::cellular_step() {
     }
 }
 
-//checks all tiles. initializes their positions, ids, and cavern ids, and whether the tile is occupied initially
+//checks all tiles. initializes their sprites, positions, ids, cavern ids, and whether the tile is occupied initially
 void Tilemap::identify_tiles() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
+            tiles[row][column].set_sprite(tilesheet);
             tiles[row][column].set_position(row, column);
+            tiles[row][column].set_sprite_position();
             tiles[row][column].set_id(cells[row][column]);
             if (tiles[row][column].get_id() == 0) { 
+                tiles[row][column].set_texture_rect(floor);
                 tiles[row][column].set_cavern(0); 
                 tiles[row][column].set_occupied(false); 
             }
+            if (tiles[row][column].get_id() == 1) { tiles[row][column].set_texture_rect(outer_wall); }
+            if (tiles[row][column].get_id() == 2) { tiles[row][column].set_texture_rect(inner_wall); }
         }
     }
 }
@@ -127,20 +129,6 @@ std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
     }
     cavern_count++;
     return cavern;
-}
-
-//checks all tiles. applies a texture rect for the appropriate subtexture in the tilesheet
-void Tilemap::identify_tile_textures() {
-    for (int row = 0; row < height; ++row) {
-        for (int column = 0; column < width; ++column) {
-            tiles[row][column].set_texture(&tilesheet); 
-            tiles[row][column].set_origin_to_center();
-            if (tiles[row][column].get_id() == 0) { tiles[row][column].set_texture_rect(floor); }
-            if (tiles[row][column].get_id() == 1) { tiles[row][column].set_texture_rect(outer_wall); }
-            if (tiles[row][column].get_id() == 2) { tiles[row][column].set_texture_rect(inner_wall); }
-            
-        }
-    }
 }
 
 //given an element at row and column, counts the "living"(1) neighbors surrounding that element

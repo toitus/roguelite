@@ -15,6 +15,8 @@ class Tilemap {
         void draw(sf::RenderWindow* w);
         void generate_new_map();
 
+        void set_texture(sf::Texture* t) { tilesheet = t; }
+
         bool can_move_left(int r, int c) { return tiles[r][c-1].is_occupied(); }
         bool can_move_right(int r, int c) { return tiles[r][c+1].is_occupied(); }
         bool can_move_up(int r, int c) { return tiles[r-1][c].is_occupied(); }
@@ -24,8 +26,6 @@ class Tilemap {
         bool can_move_down_left(int r, int c) { return tiles[r+1][c-1].is_occupied(); } 
         bool can_move_down_right(int r, int c) { return tiles[r+1][c+1].is_occupied(); }
 
-        void set_texture(sf::Texture t) { tilesheet = t; }
-
     private:
 
         int width;
@@ -33,7 +33,7 @@ class Tilemap {
         int tilesize = 24;
         int cavern_count = 1;
 
-        sf::Texture tilesheet;
+        sf::Texture* tilesheet;
 
         sf::IntRect floor = sf::IntRect(0, tilesize, tilesize, tilesize);
         sf::IntRect outer_wall = sf::IntRect(tilesize, 0, tilesize, tilesize);
@@ -41,7 +41,7 @@ class Tilemap {
 
         std::vector<std::vector<Tile>> tiles;
         void identify_tiles();
-        void identify_tile_textures();
+        void identify_texture_rects();
 
         std::vector<std::vector<int>> cells;
         std::vector<std::vector<int>> old_cells;

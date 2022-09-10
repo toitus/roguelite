@@ -9,7 +9,6 @@ class Game {
     public:
 
         Game(sf::RenderWindow* w);
-        void initialize();
         void run();
 
     private:
@@ -18,10 +17,10 @@ class Game {
         void update();
         void draw();
 
-        sf::Texture tilesheet;
-
         sf::Event event;
         sf::RenderWindow* window;
+
+        sf::Texture tilesheet;
 
         sf::Clock game_clock;
         sf::Time time_since_last_step = sf::Time::Zero;

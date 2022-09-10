@@ -5,17 +5,17 @@
 class Tile {
 
     public:
-        void set_position(int r, int c) { row = r; column = c; sprite.setPosition(row*size, column*size); }
+        void set_sprite(sf::Texture* t) { sprite.setTexture(*t); sprite.setOrigin(size/2, size/2); }
+        void set_texture_rect(sf::IntRect r) { sprite.setTextureRect(r); }
+        void set_sprite_position() { sprite.setPosition(sf::Vector2f(row*size, column*size)); }
+        void set_position(int r, int c) { row = r; column = c; }
         void set_id(int i) { id = i; }
         void set_cavern(int c) { cavern = c; }
         void set_occupied(bool o) { occupied = o; }
-        void set_texture(sf::Texture* s) { sprite.setTexture(*s); }
-        void set_texture_rect(sf::IntRect r) { sprite.setTextureRect(r); }
-        void set_origin_to_center() { sprite.setOrigin(size/2, size/2); }
 
         int get_row() { return row; }
         int get_column() { return column; }
-        sf::Vector2i get_position() { return sf::Vector2i(row*size + size/2, column*size + size/2); }
+        sf::Vector2f get_position() { return sprite.getPosition(); }
         int get_id() { return id; }
         int get_cavern() { return cavern; }
         bool is_occupied() { return occupied; }
