@@ -4,10 +4,6 @@ Tilemap::Tilemap(int w, int h) {
     width = w;
     height = h;
 
-    if (!font.loadFromFile("content/One Crayon.ttf")) { std::cout << "Font failed to load!" << std::endl; }
-    if (!tilesheet.loadFromFile("content/tilesheet.png")) { std::cout << "Tilemap's tilesheet failed to load!" << std::endl; }
-    tilesheet.setSmooth(true);
-
     cells = std::vector<std::vector<int>>(width, std::vector<int>(height, 1));
     old_cells = std::vector<std::vector<int>>(width, std::vector<int>(height, 1));
 

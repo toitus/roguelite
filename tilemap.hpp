@@ -24,6 +24,8 @@ class Tilemap {
         bool can_move_down_left(int r, int c) { return tiles[r+1][c-1].is_occupied(); } 
         bool can_move_down_right(int r, int c) { return tiles[r+1][c+1].is_occupied(); }
 
+        void set_texture(sf::Texture t) { tilesheet = t; }
+
     private:
 
         int width;
@@ -32,7 +34,6 @@ class Tilemap {
         int cavern_count = 1;
 
         sf::Texture tilesheet;
-        sf::Font font;
 
         sf::IntRect floor = sf::IntRect(0, tilesize, tilesize, tilesize);
         sf::IntRect outer_wall = sf::IntRect(tilesize, 0, tilesize, tilesize);

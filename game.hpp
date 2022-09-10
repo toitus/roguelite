@@ -9,6 +9,7 @@ class Game {
     public:
 
         Game(sf::RenderWindow* w);
+        void initialize();
         void run();
 
     private:
@@ -16,6 +17,8 @@ class Game {
         void events();
         void update();
         void draw();
+
+        sf::Texture tilesheet;
 
         sf::Event event;
         sf::RenderWindow* window;
