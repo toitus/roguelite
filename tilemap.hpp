@@ -13,6 +13,7 @@ class Tilemap {
 
         Tilemap(int w, int h);
         void draw(sf::RenderWindow* w);
+        
         void generate_new_map();
 
         void set_texture(sf::Texture* t) { tilesheet = t; }
