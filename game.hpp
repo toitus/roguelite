@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "tilemap.hpp"
+#include "player.hpp"
 
 class Game {
 
@@ -30,6 +31,7 @@ class Game {
         sf::View view;
         float zoom = 1.0f;
 
+        Player player;
         Tilemap map = Tilemap(100, 100);
 
 };

@@ -10,6 +10,9 @@ Game::Game(sf::RenderWindow* w) {
     tilesheet.setSmooth(true);
 
     map.set_texture(&tilesheet);
+    player.set_texture(&tilesheet);
+    map.generate_new_map(); 
+    player.set_position(map.get_random_position_in_largest_cavern());
 }
 
 void Game::run() {
@@ -44,7 +47,10 @@ void Game::events() {
         }
 
         if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Space) { map.generate_new_map(); }
+            if (event.key.code == sf::Keyboard::Space) { 
+                map.generate_new_map(); 
+                player.set_position(map.get_random_position_in_largest_cavern()); 
+            }
         }
     }
 }
@@ -60,5 +66,6 @@ void Game::draw() {
     window->clear();
         window->setView(view);
         map.draw(window);
+        player.draw(window);
     window->display();
 }

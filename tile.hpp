@@ -5,7 +5,8 @@
 class Tile {
 
     public:
-        void set_sprite(sf::Texture* t) { sprite.setTexture(*t); sprite.setOrigin(size/2, size/2); }
+        Tile() {  }
+        void set_texture(sf::Texture* t) { sprite.setTexture(*t); }
         void set_texture_rect(sf::IntRect r) { sprite.setTextureRect(r); }
         void set_sprite_position() { sprite.setPosition(sf::Vector2f(row*size, column*size)); }
         void set_position(int r, int c) { row = r; column = c; }

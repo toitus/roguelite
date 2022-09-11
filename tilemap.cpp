@@ -59,7 +59,7 @@ void Tilemap::cellular_step() {
 void Tilemap::identify_tiles() {
     for (int row = 0; row < height; ++row) {
         for (int column = 0; column < width; ++column) {
-            tiles[row][column].set_sprite(tilesheet);
+            tiles[row][column].set_texture(tilesheet);
             tiles[row][column].set_position(row, column);
             tiles[row][column].set_sprite_position();
             tiles[row][column].set_id(cells[row][column]);
@@ -143,4 +143,19 @@ int Tilemap::count_living_neighbors(int r, int c) {
     if (old_cells[r+1][c-1] == 1) { living_neighbors++; }
     if (old_cells[r-1][c+1] == 1) { living_neighbors++; }
     return living_neighbors;
+}
+
+//returns a position of a tile sf::Vector2f(row, column)
+sf::Vector2f Tilemap::get_random_position_in_largest_cavern() {
+    int largest_index = 0;
+    int largest_size = 0;
+    for (int i = 0; i < caverns.size(); ++i) {
+        int current_size = caverns[i].size();
+        if (current_size > largest_size) {
+            largest_size = current_size;
+            largest_index = i; 
+        }
+    }
+    int random_tile_index = rand() % caverns[largest_index].size();
+    return sf::Vector2f(caverns[largest_index][random_tile_index].x, caverns[largest_index][random_tile_index].y);
 }

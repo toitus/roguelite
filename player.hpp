@@ -6,18 +6,16 @@ class Player {
 
     public:
 
-        Player();
-
         void events(sf::Event event);
         void update();
         void draw(sf::RenderWindow* window);
 
-        void set_sprite(sf::Texture* t);
+        void set_position(sf::Vector2f p) { position = p; sprite.setPosition(p.x*size, p.y*size); }
+        void set_texture(sf::Texture* t) { sprite.setTexture(*t); sprite.setTextureRect(idle); }
 
     private:
 
-        int row;
-        int column;
+        sf::Vector2f position = sf::Vector2f(0, 0);
         int size = 24;
 
 
