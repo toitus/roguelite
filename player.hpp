@@ -2,6 +2,8 @@
 
 #include <SFML/Graphics.hpp>
 
+#include <iostream>
+
 class Player {
 
     public:
@@ -10,14 +12,13 @@ class Player {
         void update();
         void draw(sf::RenderWindow* window);
 
-        void set_position(sf::Vector2f p) { position = p; sprite.setPosition(p.x*size, p.y*size); }
+        sf::Vector2f get_sprite_position_center() { return sprite.getPosition() + sf::Vector2f(size/2, size/2); }
+        void set_position(sf::Vector2f p) { sprite.setPosition(p); }
         void set_texture(sf::Texture* t) { sprite.setTexture(*t); sprite.setTextureRect(idle); }
 
     private:
 
-        sf::Vector2f position = sf::Vector2f(0, 0);
         int size = 24;
-
 
         sf::IntRect idle = sf::IntRect(0, 0, size, size);
         sf::Sprite sprite;

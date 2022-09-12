@@ -18,7 +18,7 @@ class Tilemap {
 
         void set_texture(sf::Texture* t) { tilesheet = t; }
 
-        sf::Vector2f get_random_position_in_largest_cavern();
+        sf::Vector2f get_random_position();
 
         bool can_move_left(int r, int c) { return tiles[r][c-1].is_occupied(); }
         bool can_move_right(int r, int c) { return tiles[r][c+1].is_occupied(); }
@@ -52,7 +52,7 @@ class Tilemap {
         void cellular_step();
         int count_living_neighbors(int r, int c);
 
-        //caverns holds tile positions in row/column *not in world coords*
+        //caverns holds tile positions in row/column numbers, *not in world coords*
         std::vector<std::vector<sf::Vector2i>> caverns;
         void identify_caverns();
         std::vector<sf::Vector2i> fill_cavern(int r, int c);
