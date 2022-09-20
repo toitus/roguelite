@@ -2,11 +2,11 @@
 
 Game::Game(sf::RenderWindow* w) {
     window = w;
-    center = sf::Vector2f(50.f*24.f, 50.f*24.f);
-    size = sf::Vector2f(window->getSize().x, window->getSize().y);
-    view = sf::View(center, size);
+    view_center = sf::Vector2f((map_width/2)*map.get_tilesize(), (map_height/2)*map.get_tilesize());
+    view_size = sf::Vector2f(window->getSize().x, window->getSize().y);
+    view = sf::View(view_center, view_size);
 
-    if (!tilesheet.loadFromFile("content/tilesheet.png")) { std::cout << "Tilemap's tilesheet failed to load!" << std::endl; }
+    if (!tilesheet.loadFromFile("content/tilesheet.png")) { std::cout << "content/tilesheet.png failed to load!" << std::endl; }
     tilesheet.setSmooth(true);
 
     map.set_texture(&tilesheet);

@@ -27,11 +27,13 @@ class Game {
         sf::Time time_since_last_step = sf::Time::Zero;
         sf::Time target_time_per_step = sf::seconds(1.f/60.f);
 
-        sf::Vector2f size, center;
         sf::View view;
+        sf::Vector2f view_size, view_center;
         float zoom = 1.0f;
 
         Player player;
-        Tilemap map = Tilemap(100, 100);
+        int map_width = 100;
+        int map_height = 100;
+        Tilemap map = Tilemap(map_width, map_height);
 
 };

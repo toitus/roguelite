@@ -1,6 +1,6 @@
 #include "player.hpp"
 
-void Player::events(sf::Event event) {
+void Player::events(sf::Event* event) {
 
 }
 

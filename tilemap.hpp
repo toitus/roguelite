@@ -19,6 +19,7 @@ class Tilemap {
         void set_texture(sf::Texture* t) { tilesheet = t; }
 
         sf::Vector2f get_random_position();
+        int get_tilesize() { return tilesize; }
 
         bool can_move_left(int r, int c) { return tiles[r][c-1].is_occupied(); }
         bool can_move_right(int r, int c) { return tiles[r][c+1].is_occupied(); }

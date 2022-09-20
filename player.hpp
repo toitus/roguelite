@@ -8,7 +8,7 @@ class Player {
 
     public:
 
-        void events(sf::Event event);
+        void events(sf::Event* event);
         void update();
         void draw(sf::RenderWindow* window);
 
