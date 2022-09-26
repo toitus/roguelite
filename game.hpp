@@ -22,6 +22,7 @@ class Game {
         sf::RenderWindow* window;
 
         sf::Texture tilesheet;
+        sf::Font font;
 
         sf::Clock game_clock;
         sf::Time time_since_last_step = sf::Time::Zero;
@@ -32,8 +33,8 @@ class Game {
         float zoom = 1.0f;
 
         Player player;
-        int map_width = 100;
-        int map_height = 100;
-        Tilemap map = Tilemap(map_width, map_height);
+        int map_rows = 100;
+        int map_columns = 100;
+        Tilemap map = Tilemap(map_rows, map_columns);
 
 };

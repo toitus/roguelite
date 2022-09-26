@@ -16,24 +16,17 @@ class Tilemap {
 
         void generate_new_map();
 
-        void set_texture(sf::Texture* t) { tilesheet = t; }
+        void set_texture(sf::Texture* t, sf::Font* f);
 
-        sf::Vector2f get_random_position();
+        sf::Vector2i get_random_row_column();
         int get_tilesize() { return tilesize; }
 
-        bool can_move_left(int r, int c) { return tiles[r][c-1].is_occupied(); }
-        bool can_move_right(int r, int c) { return tiles[r][c+1].is_occupied(); }
-        bool can_move_up(int r, int c) { return tiles[r-1][c].is_occupied(); }
-        bool can_move_down(int r, int c) { return tiles[r+1][c].is_occupied(); }
-        bool can_move_up_left(int r, int c) { return tiles[r-1][c-1].is_occupied(); }
-        bool can_move_up_right(int r, int c) { return tiles[r-1][c+1].is_occupied(); }
-        bool can_move_down_left(int r, int c) { return tiles[r+1][c-1].is_occupied(); } 
-        bool can_move_down_right(int r, int c) { return tiles[r+1][c+1].is_occupied(); }
+        bool is_tile_empty(int r, int c) { return tiles[r][c].is_empty(); }
 
     private:
 
-        int width;
-        int height;
+        int num_rows;
+        int num_columns;
         int tilesize = 24;
         int cavern_count = 1;
 
