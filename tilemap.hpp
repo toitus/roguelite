@@ -46,7 +46,7 @@ class Tilemap {
         void cellular_step();
         int count_living_neighbors(int r, int c);
 
-        //caverns holds tile positions in row/column numbers, *not in world coords*
+        //caverns holds tile positions in row/column numbers
         std::vector<std::vector<sf::Vector2i>> caverns;
         void identify_caverns();
         std::vector<sf::Vector2i> fill_cavern(int r, int c);
