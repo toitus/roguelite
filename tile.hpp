@@ -24,7 +24,7 @@ class Tile {
         bool is_empty() { return empty == true; }
         bool is_occupied() { return empty == false; }
 
-        void draw(sf::RenderWindow* w) { w->draw(sprite); w->draw(text); }
+        void draw(sf::RenderWindow* w) { w->draw(sprite); /*w->draw(text);*/ }
 
     private:
 

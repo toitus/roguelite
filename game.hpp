@@ -26,7 +26,7 @@ class Game {
 
         sf::Clock game_clock;
         sf::Time time_since_last_step = sf::Time::Zero;
-        sf::Time target_time_per_step = sf::seconds(1.f/60.f);
+        sf::Time target_time_per_step = sf::seconds(1.f/100.f);
 
         sf::View view;
         sf::Vector2f view_size, view_center;
