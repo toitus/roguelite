@@ -14,7 +14,7 @@ Game::Game(sf::RenderWindow* w) {
     map.set_texture(&tilesheet, &font);
     player.set_texture(&tilesheet);
     map.generate_new_map(); 
-    player.set_row_column(map.get_random_row_column());
+    player.set_row_column(map.get_random_row_column(true));
     player.set_sprite_position(sf::Vector2f(player.get_column()*map.get_tilesize(), player.get_row()*map.get_tilesize()));
 }
 
@@ -24,7 +24,7 @@ void Game::run() {
         time_since_last_step += game_clock.restart();
         while (time_since_last_step >= target_time_per_step) {
             time_since_last_step -= target_time_per_step;
-            events();
+            //events();
             update();
         }
         draw();
@@ -54,7 +54,7 @@ void Game::events() {
         if (event.type == sf::Event::KeyPressed) {
             if (event.key.code == sf::Keyboard::Space) { 
                 map.generate_new_map(); 
-                player.set_row_column(map.get_random_row_column()); 
+                player.set_row_column(map.get_random_row_column(true)); 
                 player.set_sprite_position(sf::Vector2f(player.get_column()*map.get_tilesize(), player.get_row()*map.get_tilesize()));
             }
         }

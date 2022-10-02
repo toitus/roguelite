@@ -150,17 +150,28 @@ int Tilemap::count_living_neighbors(int r, int c) {
 }
 
 //returns a position of a random tile in the cave
-sf::Vector2i Tilemap::get_random_row_column() {
-    bool chosen = false;
-    int random_cavern;
+sf::Vector2i Tilemap::get_random_row_column(bool largest) {
+    int random_cavern = 0;
+    int random_cavern_size = 0;
     int random_tile;
+
+    if (largest) { 
+        for (int i = 0; i < caverns.size(); ++i) {
+            if (caverns[i].size() > random_cavern_size) { 
+                random_cavern = i;
+                random_cavern_size = caverns[i].size();
+            }
+        }
+    } else { random_cavern = rand() % caverns.size(); }
+
+    bool chosen = false;
     while (!chosen) {
-        random_cavern = rand() % caverns.size();
         random_tile = rand() % caverns[random_cavern].size();
         if (tiles[caverns[random_cavern][random_tile].x][caverns[random_cavern][random_tile].y].is_empty()) {
             chosen = true;
         }
     }
+
     return sf::Vector2i(caverns[random_cavern][random_tile].x, caverns[random_cavern][random_tile].y);
 }
 

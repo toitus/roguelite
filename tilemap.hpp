@@ -18,7 +18,7 @@ class Tilemap {
 
         void set_texture(sf::Texture* t, sf::Font* f);
 
-        sf::Vector2i get_random_row_column();
+        sf::Vector2i get_random_row_column(bool largest);
         int get_tilesize() { return tilesize; }
 
         bool is_tile_empty(int r, int c) { return tiles[r][c].is_empty(); }
