@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
+#include <cmath>
 
 class Player {
 
@@ -35,7 +36,8 @@ class Player {
         sf::Sprite sprite;
 
         int movement_frame_counter = 0;
-        float frames_to_finish_movement = 18;
+        int movement_speed = 15;
+        float frames_to_finish_movement;
 
         std::vector<std::string> movement_queue;
 

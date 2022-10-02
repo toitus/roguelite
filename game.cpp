@@ -63,24 +63,8 @@ void Game::events() {
 
 void Game::update() {
     view.setCenter(player.get_sprite_position_center());
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left)) { view.move(-15.f, 0.f); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right)) { view.move(15.f, 0.f); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) { view.move(0.f, -15.f); }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) { view.move(0.f, 15.f); }
 
-    //could possibly pass map to player's update method
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::W)) { //move up
-        if (map.is_tile_empty(player.get_row()-1, player.get_column())) { player.queue_movement("up"); }
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::A)) { //move left
-        if (map.is_tile_empty(player.get_row(), player.get_column()-1)) { player.queue_movement("left"); }
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::S)) { //move down
-        if (map.is_tile_empty(player.get_row()+1, player.get_column())) { player.queue_movement("down"); } 
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::D)) { //move right
-        if (map.is_tile_empty(player.get_row(), player.get_column()+1)) { player.queue_movement("right"); }
-    }
+    oversee_player_movement_queue();
 
     player.update();
 }
@@ -91,4 +75,25 @@ void Game::draw() {
         map.draw(window);
         player.draw(window);
     window->display();
+}
+
+void Game::oversee_player_movement_queue() {
+    bool w = sf::Keyboard::isKeyPressed(sf::Keyboard::W); //up
+    bool a = sf::Keyboard::isKeyPressed(sf::Keyboard::A); //left
+    bool s = sf::Keyboard::isKeyPressed(sf::Keyboard::S); //down
+    bool d = sf::Keyboard::isKeyPressed(sf::Keyboard::D); //right
+    bool q = sf::Keyboard::isKeyPressed(sf::Keyboard::Q); //up left
+    bool e = sf::Keyboard::isKeyPressed(sf::Keyboard::E); //up right
+    bool z = sf::Keyboard::isKeyPressed(sf::Keyboard::Z); //down left
+    bool c = sf::Keyboard::isKeyPressed(sf::Keyboard::C); //down right
+    bool x = sf::Keyboard::isKeyPressed(sf::Keyboard::X); //down
+
+    if (w) { if (map.is_tile_empty(player.get_row()-1, player.get_column())) { player.queue_movement("up"); } }
+    if (a) { if (map.is_tile_empty(player.get_row(), player.get_column()-1)) { player.queue_movement("left"); } }
+    if (s || x) { if (map.is_tile_empty(player.get_row()+1, player.get_column())) { player.queue_movement("down"); } }
+    if (d) { if (map.is_tile_empty(player.get_row(), player.get_column()+1)) { player.queue_movement("right"); } }
+    if (q) { if (map.is_tile_empty(player.get_row()-1, player.get_column()-1)) { player.queue_movement("upleft"); } }
+    if (e) { if (map.is_tile_empty(player.get_row()-1, player.get_column()+1)) { player.queue_movement("upright"); } }
+    if (z) { if (map.is_tile_empty(player.get_row()+1, player.get_column()-1)) { player.queue_movement("downleft"); } }
+    if (c) { if (map.is_tile_empty(player.get_row()+1, player.get_column()+1)) { player.queue_movement("downright"); } }
 }

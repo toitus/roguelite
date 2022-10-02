@@ -37,4 +37,6 @@ class Game {
         int map_columns = 100;
         Tilemap map = Tilemap(map_rows, map_columns);
 
+        void oversee_player_movement_queue();
+
 };
