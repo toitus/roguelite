@@ -9,7 +9,7 @@ class Tile {
         void set_texture(sf::Texture* t) { sprite.setTexture(*t); }
         void set_font(sf::Font* f) { text.setFont(*f); text.setCharacterSize(12); }
         void set_texture_rect(sf::IntRect r) { sprite.setTextureRect(r); }
-        void set_sprite_position() { sprite.setPosition(sf::Vector2f(column*size, row*size)); text.setPosition(sf::Vector2f(column*size, row*size)); }
+        void set_sprite_position() { sprite.setPosition(sf::Vector2f(column*size, row*size)); /*text.setPosition(sf::Vector2f(column*size, row*size));*/ }
         void set_position(int r, int c) { row = r; column = c; text.setString(std::to_string(r) + " " + std::to_string(c)); }
         void set_id(int i) { id = i; /*text.setString(std::to_string(i));*/ }
         void set_cavern(int c) { cavern = c; }
