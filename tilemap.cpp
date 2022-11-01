@@ -21,14 +21,17 @@ void Tilemap::events(sf::Event* e) {
     if (e->type == sf::Event::KeyPressed) { }
 }
 
-void Tilemap::update() {
-
+void Tilemap::update(sf::Vector2f player_center) {
+    fog_center = player_center;
 }
 
 void Tilemap::draw(sf::RenderWindow* w) {
     for (int r = 0; r < map_rows; ++r) {
         for (int c = 0; c < map_columns; ++c) {
-            w->draw(tiles[r][c].first);
+            sf::Vector2f tile_center = tiles[r][c].first.getPosition();
+            sf::Vector2f difference = fog_center - tile_center;
+            float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
+            if (length < fog_radius) w->draw(tiles[r][c].first);
         }
     }
 }
@@ -98,7 +101,7 @@ void Tilemap::generate_cellular_cave() {
                 cavern_ids[r][c] = -1;
                 tiles[r][c].second = false;
                 if (r == 0 || r == map_rows-1 || c == 0 || c == map_columns-1) {
-                    tiles[r][c].first.setString("X");
+                    tiles[r][c].first.setString("#");
                     tiles[r][c].first.setStyle(sf::Text::Bold);
                     tiles[r][c].first.setFillColor(sf::Color(189, 154, 122));
                 } else { 

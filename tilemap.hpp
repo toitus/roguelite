@@ -1,11 +1,10 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
+#include <cmath>
 
 #include "observer.hpp"
-#include "player.hpp"
 
 class Tilemap : public Observer {
 
@@ -15,7 +14,7 @@ class Tilemap : public Observer {
 
         void initialize();
         void events(sf::Event* e);
-        void update();
+        void update(sf::Vector2f player_center);
         void draw(sf::RenderWindow* w);
 
         void occupy(int r, int c);
@@ -37,6 +36,9 @@ class Tilemap : public Observer {
         int map_caverns = 1;
 
         sf::Font tilemap_font;
+
+        sf::Vector2f fog_center;
+        float fog_radius = 500;
 
         //bool determines if a tile is walkable
         std::vector<std::vector<std::pair<sf::Text, bool>>> tiles;

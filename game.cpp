@@ -59,7 +59,7 @@ void Game::events() {
 }
 
 void Game::update() {
-    tilemap.update();
+    tilemap.update(player.center());
     player.update(target_step_time.asSeconds(), &view);
 }
 

@@ -97,7 +97,6 @@ void Player::update_view(float dt, sf::View* v) {
     sf::Vector2f difference = player - center;
     float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
     float speed = 5;
-    //if (length < 25 && tilemap.no_movement_input()) speed = 8;
     if (length < 25 && movement_queue.size() == 0) speed = 8;
     if (length > 8) {
         sf::Vector2f camera_move = difference * dt * speed;
