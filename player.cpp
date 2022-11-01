@@ -62,26 +62,50 @@ void Player::queue(sf::String movement) {
         sf::String front = movement_queue.front();
         if (movement == "up" && front != "up" && movement != "down") {
             movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
             current_row--;
+            occupy(current_row, current_column);
         }
         if (movement == "left" && front != "left" && movement != "right") {
             movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
             current_column--;
+            occupy(current_row, current_column);
         }
         if (movement == "down" && front != "down" && movement != "up") {
             movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
             current_row++;
+            occupy(current_row, current_column);
         }
         if (movement == "right" && front != "right" && movement != "left") {
             movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
             current_column++;
+            occupy(current_row, current_column);
         }
     } else if (movement_queue.empty()) {
         movement_queue.push_back(movement);
-        if (movement == "up") current_row--;
-        if (movement == "left") current_column--;
-        if (movement == "down") current_row++;
-        if (movement == "right") current_column++;
+        if (movement == "up") {
+            evacuate(current_row, current_column);
+            current_row--;
+            occupy(current_row, current_column);
+        }
+        if (movement == "left") {
+            evacuate(current_row, current_column);
+            current_column--;
+            occupy(current_row, current_column);
+        }
+        if (movement == "down") {
+            evacuate(current_row, current_column);
+            current_row++;
+            occupy(current_row, current_column);
+        }
+        if (movement == "right") {
+            evacuate(current_row, current_column);
+            current_column++;
+            occupy(current_row, current_column);
+        }
     }
 }
 

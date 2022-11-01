@@ -19,6 +19,7 @@ void Tilemap::initialize() {
     }
 
     player.initialize(&font);
+    player.set_tilemap(this);
 
 }
 
@@ -39,6 +40,16 @@ void Tilemap::draw(sf::RenderWindow* w) {
             player.draw(w);
         }
     }
+}
+
+void Tilemap::occupy(int r, int c) {
+    tiles[r][c].second = false;
+    std::cout << "occupying " << r << " " << c << std::endl;
+}
+
+void Tilemap::evacuate(int r, int c) {
+    tiles[r][c].second = true;
+    std::cout << "evacuating " << r << " " << c << std::endl;
 }
 
 void Tilemap::generate_cellular_cave() {
@@ -163,8 +174,13 @@ std::vector<sf::Vector2i> Tilemap::flood_cavern(int r, int c) {
 void Tilemap::player_movement_input() {
     bool up = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
     bool left = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::X);
     bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+
+    bool up_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
+    bool up_right = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
+    bool down_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Z);
+    bool down_right = sf::Keyboard::isKeyPressed(sf::Keyboard::C);
 
     no_movement_inputs = !up && !left && !down && !right;
 

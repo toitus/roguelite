@@ -3,7 +3,9 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-class Player {
+#include "subject.hpp"
+
+class Player : public Subject {
 
     public:
 

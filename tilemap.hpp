@@ -4,9 +4,10 @@
 
 #include <iostream>
 
+#include "observer.hpp"
 #include "player.hpp"
 
-class Tilemap {
+class Tilemap : public Observer {
 
     public:
 
@@ -16,6 +17,9 @@ class Tilemap {
         void events(sf::Event* e);
         void update();
         void draw(sf::RenderWindow* w);
+
+        void occupy(int r, int c);
+        void evacuate(int r, int c);
 
         int rows() { return map_rows; }
         int columns() { return map_columns; }
