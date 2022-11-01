@@ -1,116 +1,141 @@
 #include "tilemap.hpp"
 
-Tilemap::Tilemap(int rows, int columns) {
-    num_rows = rows;
-    num_columns = columns;
+Tilemap::Tilemap() {
+    tiles = std::vector<std::vector<std::pair<sf::Text, bool>>>(map_rows, std::vector<std::pair<sf::Text, bool>>(map_columns));
+    cavern_ids = std::vector<std::vector<int>>(map_rows, std::vector<int>(map_columns));
+}
 
-    cells = std::vector<std::vector<int>>(num_rows, std::vector<int>(num_columns, 1));
-    old_cells = std::vector<std::vector<int>>(num_rows, std::vector<int>(num_columns, 1));
+void Tilemap::initialize() {
+    if (font.loadFromFile("content/font.ttf")) { 
+        for (int r = 0; r < map_rows; ++r) {
+            for (int c = 0; c < map_columns; ++c) {
+                tiles[r][c].first.setFont(font);
+                tiles[r][c].first.setCharacterSize(tilesize);
+                tiles[r][c].second = false;
+            }  
+        }
+    } else {
+        std::cout << "font failed to load" << std::endl; 
+    }
 
-    tiles = std::vector<std::vector<Tile>>(num_rows, std::vector<Tile>(num_columns));
+    player.initialize(&font);
+
+}
+
+void Tilemap::events(sf::Event* e) {
+    player.events(e);
+    if (e->type == sf::Event::KeyPressed) { }
+}
+
+void Tilemap::update() {
+    player_movement_input();
+    player.update();
 }
 
 void Tilemap::draw(sf::RenderWindow* w) {
-    for (int row = 0; row < num_rows; ++row) {
-        for (int column = 0; column < num_columns; ++column) {
-            tiles[row][column].draw(w);
+    for (int r = 0; r < map_rows; ++r) {
+        for (int c = 0; c < map_columns; ++c) {
+            w->draw(tiles[r][c].first);
+            player.draw(w);
         }
     }
 }
 
-void Tilemap::generate_new_map() {
-    cavern_count = 1;
+void Tilemap::generate_cellular_cave() {
+    std::vector<std::vector<int>> cells(map_rows, std::vector<int>(map_columns, 1));
+    std::vector<std::vector<int>> old_cells(map_rows, std::vector<int>(map_columns, 1));
+
     caverns.clear();
-    set_cells();
-    int steps = 5;
-    for (int i = 0; i < steps; ++i) {
-        cellular_step();
-    }
-    identify_inner_walls();
-    identify_tiles();
-    identify_caverns();
-}
+    map_caverns = 1;
 
-//initializes cells to "alive"(1) and gives them a random chance to start as "dead"(0)
-void Tilemap::set_cells() {
-    for (int row = 0; row < num_rows; ++row) {
-        for (int column = 0; column < num_columns; ++column) {
-            if (row != 0 && row != num_rows-1 && column != 0 && column != num_columns-1) {
-                cells[row][column] = 1;
-                int chance_to_die = rand() % 100 + 1;
-                if (chance_to_die < 44) { cells[row][column] = 0; }
+    //initializing cells
+    for (int r = 1; r < map_rows-1; ++r) {
+        for (int c = 1; c < map_columns-1; ++c) {
+            int death_chance = rand() % 100;
+            if (death_chance < 43) {
+                cells[r][c] = 0;
             }
         }
     }
-}
 
-//checks all cells minus cave border. if a cell has more than 4 "living"(1) neighbors, it is set to "dead"(0)
-void Tilemap::cellular_step() {
-    old_cells = cells;
-    for (int row = 1; row < num_rows-1; ++row) {
-        for (int column = 1; column < num_columns-1; ++column) {
-            int living_neighbors = count_living_neighbors(row, column);
-            if (living_neighbors > 4) { cells[row][column] = 0; } else { cells[row][column] = 1; }
-        }
-    }
-}
-
-//checks all tiles. initializes their sprites, positions, ids, cavern ids, and whether the tile is occupied initially
-void Tilemap::identify_tiles() {
-    for (int row = 0; row < num_rows; ++row) {
-        for (int column = 0; column < num_columns; ++column) {
-            tiles[row][column].set_position(row, column);
-            tiles[row][column].set_sprite_position();
-            tiles[row][column].set_id(cells[row][column]);
-            tiles[row][column].set_occupied(); 
-            if (tiles[row][column].get_id() == 0) { 
-                tiles[row][column].set_texture_rect(floor);
-                tiles[row][column].set_cavern(0); 
-                tiles[row][column].set_empty(); 
-            }
-            if (tiles[row][column].get_id() == 1) { 
-                tiles[row][column].set_texture_rect(outer_wall); 
-            }
-            if (tiles[row][column].get_id() == 2) { 
-                tiles[row][column].set_texture_rect(inner_wall); 
+    //cellular steps
+    for (int s = 0; s < 5; ++s) {
+        old_cells = cells;
+        for (int r = 1; r < map_rows-1; ++r) {
+            for (int c = 1; c < map_columns-1; ++c) {
+                int living_neighbors = 0;
+                if (old_cells[r-1][c] == 1) living_neighbors++;
+                if (old_cells[r+1][c] == 1) living_neighbors++;
+                if (old_cells[r][c-1] == 1) living_neighbors++;
+                if (old_cells[r][c+1] == 1) living_neighbors++;
+                if (old_cells[r-1][c-1] == 1) living_neighbors++;
+                if (old_cells[r+1][c+1] == 1) living_neighbors++;
+                if (old_cells[r+1][c-1] == 1) living_neighbors++;
+                if (old_cells[r-1][c+1] == 1) living_neighbors++;
+                if (living_neighbors > 4) cells[r][c] = 0;
+                else cells[r][c] = 1;
             }
         }
     }
-}
 
-//checks all tiles that are not floor tiles(id=0). if a tile has no floor tiles around it, it is an inner wall(id=2)
-void Tilemap::identify_inner_walls() {
-    for (int row = 1; row < num_rows-1; ++row) {
-        for (int column = 1; column < num_columns-1; ++column) {
-            if (tiles[row][column].get_id() != 0) {
-                int count = 0;
-                if (tiles[row-1][column].get_id() == 0) { count++; }
-                if (tiles[row+1][column].get_id() == 0) { count++; }
-                if (tiles[row][column-1].get_id() == 0) { count++; }
-                if (tiles[row][column+1].get_id() == 0) { count++; }
-                if (tiles[row-1][column-1].get_id() == 0) { count++; }
-                if (tiles[row+1][column+1].get_id() == 0) { count++; }
-                if (tiles[row+1][column-1].get_id() == 0) { count++; }
-                if (tiles[row-1][column+1].get_id() == 0) { count++; }
-                if (count == 0) { tiles[row][column].set_id(2); }
+    //set tile text, position, and initial cavern id to prep flood fill process
+    for (int r = 0; r < map_rows; ++r) {
+        for (int c = 0; c < map_columns; ++c) {
+
+            if (cells[r][c] == 0) {
+                tiles[r][c].first.setString(" ");
+                tiles[r][c].second = true;
+                cavern_ids[r][c] = 0;
+            }
+
+            if (cells[r][c] == 1) {
+                cavern_ids[r][c] = -1;
+                tiles[r][c].second = false;
+                if (r == 0 || r == map_rows-1 || c == 0 || c == map_columns-1) {
+                    tiles[r][c].first.setString("X");
+                    tiles[r][c].first.setStyle(sf::Text::Bold);
+                    tiles[r][c].first.setFillColor(sf::Color(189, 154, 122));
+                } else { 
+                    if (cells[r-1][c-1] == 0 || cells[r-1][c] == 0 || cells[r-1][c+1] == 0 || cells[r][c-1] == 0 || 
+                        cells[r][c+1] == 0 || cells[r+1][c-1] == 0 || cells[r+1][c] == 0 || cells[r+1][c+1] == 0 ) {
+                        tiles[r][c].first.setString("#");
+                        tiles[r][c].first.setFillColor(sf::Color(189, 154, 122));
+                    } else {
+                        tiles[r][c].first.setString("#");
+                        tiles[r][c].first.setFillColor(sf::Color(103, 71, 54));
+                    }
+                }
+            }
+
+            //centers text inside its tile
+            sf::Vector2f half_text_size = sf::Vector2f(
+                tiles[r][c].first.getGlobalBounds().width/2, tiles[r][c].first.getGlobalBounds().height/2
+            );
+
+            sf::Vector2f local_text_position = sf::Vector2f(
+                tiles[r][c].first.getLocalBounds().left, tiles[r][c].first.getLocalBounds().top
+            );
+
+            tiles[r][c].first.setOrigin(half_text_size + local_text_position);
+
+            tiles[r][c].first.setPosition(c*tilesize + tilesize/2, r*tilesize + tilesize/2);
+
+        }
+    }
+
+    //flood flill caverns to populate caverns vector
+    for (int r = 1; r < map_rows-1; ++r) {
+        for (int c = 1; c < map_columns; ++c) {
+            if (cavern_ids[r][c] == 0) {
+                caverns.push_back(flood_cavern(r, c));
             }
         }
     }
+
 }
 
-//starts the flood-fill process for identifying each unique(unconnected) cavern in the cave
-void Tilemap::identify_caverns() {
-    for (int row = 1; row < num_rows-1; ++row) {
-        for (int column = 1; column < num_columns-1; ++column) {
-            if (tiles[row][column].get_cavern() == 0) {
-                caverns.push_back(fill_cavern(row, column));
-            }
-        }
-    }
-}
-
-//flood-fill algorithm for populating each cavern in the caverns vector
-std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
+//flood fill algorithm for identifying unconnected cavern sections of the map
+std::vector<sf::Vector2i> Tilemap::flood_cavern(int r, int c) {
     std::vector<sf::Vector2i> queue;
     std::vector<sf::Vector2i> cavern;
 
@@ -118,69 +143,51 @@ std::vector<sf::Vector2i> Tilemap::fill_cavern(int r, int c) {
     while (queue.size() > 0) {
         sf::Vector2i temp = queue[0];
         queue.erase(queue.begin());
-        if (tiles[temp.x][temp.y].get_cavern() == 0) {
-            tiles[temp.x][temp.y].set_cavern(cavern_count);
+        if (cavern_ids[temp.x][temp.y] == 0) {
+            cavern_ids[temp.x][temp.y] = map_caverns;
             cavern.push_back(temp);
-            if (tiles[temp.x-1][temp.y].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y)); }
-            if (tiles[temp.x+1][temp.y].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y)); }
-            if (tiles[temp.x][temp.y-1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x, temp.y-1)); }
-            if (tiles[temp.x][temp.y+1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x, temp.y+1)); }
-            if (tiles[temp.x-1][temp.y-1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y-1)); }
-            if (tiles[temp.x+1][temp.y+1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y+1)); }
-            if (tiles[temp.x+1][temp.y-1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y-1)); }
-            if (tiles[temp.x-1][temp.y+1].get_cavern() == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y+1)); }
+            if (cavern_ids[temp.x-1][temp.y] == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y)); }
+            if (cavern_ids[temp.x+1][temp.y] == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y)); }
+            if (cavern_ids[temp.x][temp.y-1] == 0) { queue.push_back(sf::Vector2i(temp.x, temp.y-1)); }
+            if (cavern_ids[temp.x][temp.y+1] == 0) { queue.push_back(sf::Vector2i(temp.x, temp.y+1)); }
+            if (cavern_ids[temp.x-1][temp.y-1] == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y-1)); }
+            if (cavern_ids[temp.x+1][temp.y+1] == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y+1)); }
+            if (cavern_ids[temp.x+1][temp.y-1] == 0) { queue.push_back(sf::Vector2i(temp.x+1, temp.y-1)); }
+            if (cavern_ids[temp.x-1][temp.y+1] == 0) { queue.push_back(sf::Vector2i(temp.x-1, temp.y+1)); }
         }
     }
-    cavern_count++;
+    map_caverns++;
     return cavern;
 }
 
-//given an element at row and column, counts the "living"(1) neighbors surrounding that element
-int Tilemap::count_living_neighbors(int r, int c) {
-    int living_neighbors = 0;
-    if (old_cells[r-1][c] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c] == 1) { living_neighbors++; }
-    if (old_cells[r][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r][c+1] == 1) { living_neighbors++; }
-    if (old_cells[r-1][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c+1] == 1) { living_neighbors++; }
-    if (old_cells[r+1][c-1] == 1) { living_neighbors++; }
-    if (old_cells[r-1][c+1] == 1) { living_neighbors++; }
-    return living_neighbors;
-}
+void Tilemap::player_movement_input() {
+    bool up = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+    bool left = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
+    bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
 
-//returns a position of a random tile in the cave
-sf::Vector2i Tilemap::get_random_row_column(bool largest) {
-    int random_cavern = 0;
-    int random_cavern_size = 0;
-    int random_tile;
+    no_movement_inputs = !up && !left && !down && !right;
 
-    if (largest) { 
-        for (int i = 0; i < caverns.size(); ++i) {
-            if (caverns[i].size() > random_cavern_size) { 
-                random_cavern = i;
-                random_cavern_size = caverns[i].size();
-            }
-        }
-    } else { random_cavern = rand() % caverns.size(); }
+    int r = player.row();
+    int c = player.column();
 
-    bool chosen = false;
-    while (!chosen) {
-        random_tile = rand() % caverns[random_cavern].size();
-        if (tiles[caverns[random_cavern][random_tile].x][caverns[random_cavern][random_tile].y].is_empty()) {
-            chosen = true;
-        }
+    if (up && tiles[r-1][c].second) {
+        player.queue("up");
     }
 
-    return sf::Vector2i(caverns[random_cavern][random_tile].x, caverns[random_cavern][random_tile].y);
+    if (left && tiles[r][c-1].second) {
+        player.queue("left");
+    }
+
+    if (down && tiles[r+1][c].second) {
+        player.queue("down");
+    }
+
+    if (right && tiles[r][c+1].second) {
+        player.queue("right");
+    }
 }
 
-void Tilemap::set_texture(sf::Texture* t, sf::Font* f) {
-    tilesheet = t;
-    for (int row = 0; row < num_rows; ++row) {
-        for (int column = 0; column < num_columns; ++column) {
-            tiles[row][column].set_texture(tilesheet);
-            tiles[row][column].set_font(f);
-        }
-    }
+sf::Vector2f Tilemap::player_center() {
+    return player.center();
 }

@@ -3,54 +3,50 @@
 #include <SFML/Graphics.hpp>
 
 #include <iostream>
-#include <stdlib.h>
 
-#include "tile.hpp"
+#include "player.hpp"
 
 class Tilemap {
 
     public:
 
-        Tilemap(int w, int h);
+        Tilemap();
+
+        void initialize();
+        void events(sf::Event* e);
+        void update();
         void draw(sf::RenderWindow* w);
 
-        void generate_new_map();
+        int rows() { return map_rows; }
+        int columns() { return map_columns; }
+        int height() { return map_rows * tilesize; }
+        int width() { return map_columns * tilesize; }
 
-        void set_texture(sf::Texture* t, sf::Font* f);
+        sf::Vector2f player_center();
+        bool no_movement_input() { return no_movement_inputs; }
+        void player_movement_input();
 
-        sf::Vector2i get_random_row_column(bool largest);
-        int get_tilesize() { return tilesize; }
-
-        bool is_tile_empty(int r, int c) { return tiles[r][c].is_empty(); }
+        void generate_cellular_cave();
 
     private:
 
-        int num_rows;
-        int num_columns;
-        int tilesize = 24;
-        int cavern_count = 1;
+        int tilesize = 48;
+        int map_rows = 100;
+        int map_columns = 100;
+        int map_caverns = 1;
 
-        sf::Texture* tilesheet;
+        bool no_movement_inputs;
 
-        sf::IntRect floor = sf::IntRect(0, tilesize, tilesize, tilesize);
-        sf::IntRect outer_wall = sf::IntRect(tilesize, 0, tilesize, tilesize);
-        sf::IntRect inner_wall = sf::IntRect(tilesize, tilesize, tilesize, tilesize);
+        sf::Font font;
 
-        std::vector<std::vector<Tile>> tiles;
-        void identify_tiles();
-        void identify_texture_rects();
+        //bool determines if a tile is walkable
+        std::vector<std::vector<std::pair<sf::Text, bool>>> tiles;
 
-        std::vector<std::vector<int>> cells;
-        std::vector<std::vector<int>> old_cells;
-        void set_cells();
-        void cellular_step();
-        int count_living_neighbors(int r, int c);
-
-        //caverns holds tile positions in row/column numbers
+        std::vector<std::vector<int>> cavern_ids;
         std::vector<std::vector<sf::Vector2i>> caverns;
-        void identify_caverns();
-        std::vector<sf::Vector2i> fill_cavern(int r, int c);
 
-        void identify_inner_walls();
+        std::vector<sf::Vector2i> flood_cavern(int r, int c);
+
+        Player player;
 
 };

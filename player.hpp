@@ -1,46 +1,38 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-
 #include <iostream>
-#include <cmath>
 
 class Player {
 
     public:
 
-        Player();
+        void initialize(sf::Font* f);
 
-        void events(sf::Event* event);
+        void place(int r, int c);
+        void move();
+        int row() { return current_row; }
+        int column() { return current_column; }
+        sf::Vector2f center();
+
+        void queue(sf::String movement);
+
+        void events(sf::Event* e);
         void update();
-        void draw(sf::RenderWindow* window);
-
-        sf::Vector2f get_sprite_position_center() { return sprite.getPosition() + sf::Vector2f(size/2, size/2); }
-        int get_row() { return row_column.x; }
-        int get_column() { return row_column.y; }
-        void set_sprite_position(sf::Vector2f v) { sprite.setPosition(v); }
-        void set_row_column(sf::Vector2i v) { row_column = v; }
-        void set_texture(sf::Texture* t) { sprite.setTexture(*t); sprite.setTextureRect(idle); }
-
-        void queue_movement(std::string d);
-
-        void apply_movement();
+        void draw(sf::RenderWindow* w);
 
     private:
 
-        int size = 24;
+        int current_row;
+        int current_column;
+        int tilesize = 48;
 
-        sf::Vector2i row_column;
-
-        sf::IntRect idle = sf::IntRect(0, 0, size, size);
-        sf::Sprite sprite;
+        sf::Text icon;
 
         int movement_frame_counter = 0;
         int movement_speed = 15;
         float frames_to_finish_movement;
 
-        std::vector<std::string> movement_queue;
-
-        std::string direction = "idle";
+        std::vector<sf::String> movement_queue;
 
 };
