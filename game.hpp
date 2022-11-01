@@ -1,9 +1,9 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
-#include <cmath>
 #include <algorithm>
 
+#include "player.hpp"
 #include "tilemap.hpp"
 
 class Game {
@@ -24,16 +24,15 @@ class Game {
 
         sf::Clock step_clock;
         sf::Time time_since_last_step = sf::Time::Zero;
-        sf::Time target_step_time = sf::seconds(1.f/60.f);
+        sf::Time target_step_time = sf::seconds(1.f/120.f);
 
-        sf::Font font;
+        //sf::Font game_font;
 
         Tilemap tilemap;
+        Player player; 
 
         void events();
         void update();
         void draw();
-
-        void camera_follow_player();
 
 };

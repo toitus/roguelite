@@ -2,11 +2,15 @@
 
 Game::Game(sf::RenderWindow* w) {
     window = w;
-    window->setFramerateLimit(60);
+    window->setFramerateLimit(120);
+
+    //if (!game_font.loadFromFile(" ")) { std::cout << " failed to load" << std::endl; }
 
     tilemap.initialize();
+    player.initialize();
+    player.set_tilemap(&tilemap);
 
-    view_center = tilemap.player_center();
+    view_center = player.center();
     view_size = sf::Vector2f(window->getSize().x, window->getSize().y);
     view = sf::View(view_center, view_size);
 
@@ -48,34 +52,21 @@ void Game::events() {
             }
         }
 
+        player.events(&event);
         tilemap.events(&event);
 
     }
 }
 
 void Game::update() {
-
-    camera_follow_player();
     tilemap.update();
-
+    player.update(target_step_time.asSeconds(), &view);
 }
 
 void Game::draw() {
     window->clear(sf::Color::Black);
     window->setView(view);
     tilemap.draw(window);
+    player.draw(window);
     window->display();
-}
-
-void Game::camera_follow_player() {
-    sf::Vector2f player = tilemap.player_center();
-    sf::Vector2f center = view.getCenter();
-    sf::Vector2f difference = player - center;
-    float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
-    float speed = 5;
-    if (length < 25 && tilemap.no_movement_input()) speed = 8;
-    if (length > 8) {
-        sf::Vector2f camera_move = difference * target_step_time.asSeconds() * speed;
-        view.move(camera_move);
-    }
 }

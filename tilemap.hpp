@@ -20,28 +20,23 @@ class Tilemap : public Observer {
 
         void occupy(int r, int c);
         void evacuate(int r, int c);
+        bool is_walkable(int r, int c);
 
         int rows() { return map_rows; }
         int columns() { return map_columns; }
         int height() { return map_rows * tilesize; }
         int width() { return map_columns * tilesize; }
 
-        sf::Vector2f player_center();
-        bool no_movement_input() { return no_movement_inputs; }
-        void player_movement_input();
-
         void generate_cellular_cave();
 
     private:
 
-        int tilesize = 48;
-        int map_rows = 100;
-        int map_columns = 100;
+        int tilesize = 45;
+        int map_rows = 60;
+        int map_columns = 60;
         int map_caverns = 1;
 
-        bool no_movement_inputs;
-
-        sf::Font font;
+        sf::Font tilemap_font;
 
         //bool determines if a tile is walkable
         std::vector<std::vector<std::pair<sf::Text, bool>>> tiles;
@@ -50,7 +45,5 @@ class Tilemap : public Observer {
         std::vector<std::vector<sf::Vector2i>> caverns;
 
         std::vector<sf::Vector2i> flood_cavern(int r, int c);
-
-        Player player;
 
 };

@@ -6,38 +6,29 @@ Tilemap::Tilemap() {
 }
 
 void Tilemap::initialize() {
-    if (font.loadFromFile("content/font.ttf")) { 
+    if (tilemap_font.loadFromFile("content/tilemap_font.ttf")) { 
         for (int r = 0; r < map_rows; ++r) {
             for (int c = 0; c < map_columns; ++c) {
-                tiles[r][c].first.setFont(font);
+                tiles[r][c].first.setFont(tilemap_font);
                 tiles[r][c].first.setCharacterSize(tilesize);
                 tiles[r][c].second = false;
             }  
         }
-    } else {
-        std::cout << "font failed to load" << std::endl; 
-    }
-
-    player.initialize(&font);
-    player.set_tilemap(this);
-
+    } else { std::cout << "tilemap font failed to load" << std::endl; }
 }
 
 void Tilemap::events(sf::Event* e) {
-    player.events(e);
     if (e->type == sf::Event::KeyPressed) { }
 }
 
 void Tilemap::update() {
-    player_movement_input();
-    player.update();
+
 }
 
 void Tilemap::draw(sf::RenderWindow* w) {
     for (int r = 0; r < map_rows; ++r) {
         for (int c = 0; c < map_columns; ++c) {
             w->draw(tiles[r][c].first);
-            player.draw(w);
         }
     }
 }
@@ -50,6 +41,10 @@ void Tilemap::occupy(int r, int c) {
 void Tilemap::evacuate(int r, int c) {
     tiles[r][c].second = true;
     std::cout << "evacuating " << r << " " << c << std::endl;
+}
+
+bool Tilemap::is_walkable(int r, int c) {
+    return tiles[r][c].second;
 }
 
 void Tilemap::generate_cellular_cave() {
@@ -169,41 +164,4 @@ std::vector<sf::Vector2i> Tilemap::flood_cavern(int r, int c) {
     }
     map_caverns++;
     return cavern;
-}
-
-void Tilemap::player_movement_input() {
-    bool up = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-    bool left = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::X);
-    bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
-
-    bool up_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
-    bool up_right = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
-    bool down_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Z);
-    bool down_right = sf::Keyboard::isKeyPressed(sf::Keyboard::C);
-
-    no_movement_inputs = !up && !left && !down && !right;
-
-    int r = player.row();
-    int c = player.column();
-
-    if (up && tiles[r-1][c].second) {
-        player.queue("up");
-    }
-
-    if (left && tiles[r][c-1].second) {
-        player.queue("left");
-    }
-
-    if (down && tiles[r+1][c].second) {
-        player.queue("down");
-    }
-
-    if (right && tiles[r][c+1].second) {
-        player.queue("right");
-    }
-}
-
-sf::Vector2f Tilemap::player_center() {
-    return player.center();
 }
