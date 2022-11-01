@@ -18,7 +18,9 @@ void Tilemap::initialize() {
 }
 
 void Tilemap::events(sf::Event* e) {
-    if (e->type == sf::Event::KeyPressed) { }
+    if (e->type == sf::Event::KeyPressed) { 
+        if (e->key.code == sf::Keyboard::F) { fog_enabled = !fog_enabled; } //for testing
+    }
 }
 
 void Tilemap::update(sf::Vector2f player_center) {
@@ -28,10 +30,12 @@ void Tilemap::update(sf::Vector2f player_center) {
 void Tilemap::draw(sf::RenderWindow* w) {
     for (int r = 0; r < map_rows; ++r) {
         for (int c = 0; c < map_columns; ++c) {
-            sf::Vector2f tile_center = tiles[r][c].first.getPosition();
-            sf::Vector2f difference = fog_center - tile_center;
-            float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
-            if (length < fog_radius) w->draw(tiles[r][c].first);
+            if (fog_enabled) {
+                sf::Vector2f tile_center = tiles[r][c].first.getPosition();
+                sf::Vector2f difference = fog_center - tile_center;
+                float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
+                if (length < fog_radius) { w->draw(tiles[r][c].first); }
+            } else { w->draw(tiles[r][c].first); }
         }
     }
 }

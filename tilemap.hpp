@@ -37,6 +37,8 @@ class Tilemap : public Observer {
 
         sf::Font tilemap_font;
 
+        bool fog_enabled = true; //for testing
+
         sf::Vector2f fog_center;
         float fog_radius = 500;
 
