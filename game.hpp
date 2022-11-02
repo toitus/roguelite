@@ -20,7 +20,7 @@ class Game {
 
         sf::View view;
         sf::Vector2f view_size, view_center;
-        float zoom = 1.0f;
+        float zoom = 1.25f;
 
         sf::Clock step_clock;
         sf::Time time_since_last_step = sf::Time::Zero;

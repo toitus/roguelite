@@ -13,6 +13,7 @@ Game::Game(sf::RenderWindow* w) {
     view_center = player.center();
     view_size = sf::Vector2f(window->getSize().x, window->getSize().y);
     view = sf::View(view_center, view_size);
+    view.zoom(zoom);
 
 }
 
@@ -41,8 +42,8 @@ void Game::events() {
         if (event.type == sf::Event::MouseWheelMoved) {
             sf::Vector2u size = window->getSize();
             view.setSize(size.x, size.y);
-            zoom -= 0.3f * event.mouseWheel.delta;
-            if (zoom < 1.0f) zoom = 1.0f;
+            zoom -= 0.25f * event.mouseWheel.delta;
+            if (zoom < 1.25f) zoom = 1.25f;
             view.zoom(zoom);
         }
 
