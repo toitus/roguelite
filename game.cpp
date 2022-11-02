@@ -19,11 +19,11 @@ Game::Game(sf::RenderWindow* w) {
 
 void Game::run() {
     while (window->isOpen()) {
-        events();
+        if (window->hasFocus()) events();
         time_since_last_step += step_clock.restart();
         while (time_since_last_step >= target_step_time) {
             time_since_last_step -= target_step_time;
-            update();
+            if (window->hasFocus()) update();            
         }
         draw();
     }
