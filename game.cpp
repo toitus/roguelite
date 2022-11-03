@@ -19,7 +19,7 @@ Game::Game(sf::RenderWindow* w) {
 
 void Game::run() {
     while (window->isOpen()) {
-        if (window->hasFocus()) events();
+        events();
         time_since_last_step += step_clock.restart();
         while (time_since_last_step >= target_step_time) {
             time_since_last_step -= target_step_time;
@@ -31,6 +31,7 @@ void Game::run() {
 
 void Game::events() {
     while (window->pollEvent(event)) {
+
         if (event.type == sf::Event::Closed) { window->close(); }
 
         if (event.type == sf::Event::Resized) {
@@ -39,22 +40,24 @@ void Game::events() {
             window->setView(view);
         }
 
-        if (event.type == sf::Event::MouseWheelMoved) {
-            sf::Vector2u size = window->getSize();
-            view.setSize(size.x, size.y);
-            zoom -= 0.25f * event.mouseWheel.delta;
-            if (zoom < 1.25f) zoom = 1.25f;
-            view.zoom(zoom);
-        }
-
-        if (event.type == sf::Event::KeyPressed) {
-            if (event.key.code == sf::Keyboard::Space) {
-                tilemap.generate_cellular_cave();
+        if (window->hasFocus()) {
+            if (event.type == sf::Event::MouseWheelMoved) {
+                sf::Vector2u size = window->getSize();
+                view.setSize(size.x, size.y);
+                zoom -= 0.25f * event.mouseWheel.delta;
+                if (zoom < 1.25f) zoom = 1.25f;
+                view.zoom(zoom);
             }
-        }
 
-        player.events(&event);
-        tilemap.events(&event);
+            if (event.type == sf::Event::KeyPressed) {
+                if (event.key.code == sf::Keyboard::Space) {
+                    tilemap.generate_cellular_cave();
+                }
+            }
+
+            player.events(&event);
+            tilemap.events(&event);
+        }
 
     }
 }
