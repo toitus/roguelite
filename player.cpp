@@ -50,39 +50,42 @@ void Player::listen_for_movement_input() {
     int r = current_row;
     int c = current_column;
 
-    if (up && is_walkable(r-1, c)) {
-        queue("up");
-    }
-
-    if (left && is_walkable(r, c-1)) {
-        queue("left");
-    }
-
-    if (down && is_walkable(r+1, c)) {
-        queue("down");
-    }
-
-    if (right && is_walkable(r, c+1)) {
-        queue("right");
-    }
+    if (up && is_walkable(r-1, c)) { queue("up"); }
+    if (left && is_walkable(r, c-1)) { queue("left"); }
+    if (down && is_walkable(r+1, c)) { queue("down"); }
+    if (right && is_walkable(r, c+1)) { queue("right"); }
+    if (up_left && is_walkable(r-1, c-1)) { queue("up left"); }
+    if (up_right && is_walkable(r-1, c+1)) { queue("up right"); }
+    if (down_left && is_walkable(r+1, c-1)) { queue("down left"); }
+    if (down_right && is_walkable(r+1, c+1)) { queue("down right"); }
 }
 
 void Player::apply_queued_movement() {
     if (movement_queue.size() > 0) {
         sf::String front = movement_queue.front();
         frames_to_finish_movement = movement_speed;
-        if (front == "up") {
-            icon.move(0, -tilesize/frames_to_finish_movement);
+        if (front == "up") { icon.move(0, -tilesize/frames_to_finish_movement); }
+        if (front == "left") { icon.move(-tilesize/frames_to_finish_movement, 0); }
+        if (front == "down") { icon.move(0, tilesize/frames_to_finish_movement); }
+        if (front == "right") { icon.move(tilesize/frames_to_finish_movement, 0); }
+
+        if (front == "up left") { 
+            frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
+            icon.move(-tilesize/frames_to_finish_movement, -tilesize/frames_to_finish_movement);
         }
-        if (front == "left") {
-            icon.move(-tilesize/frames_to_finish_movement, 0);
+        if (front == "up right") { 
+            frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
+            icon.move(tilesize/frames_to_finish_movement, -tilesize/frames_to_finish_movement);
         }
-        if (front == "down") {
-            icon.move(0, tilesize/frames_to_finish_movement);
+        if (front == "down left") { 
+            frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
+            icon.move(-tilesize/frames_to_finish_movement, tilesize/frames_to_finish_movement);
         }
-        if (front == "right") {
-            icon.move(tilesize/frames_to_finish_movement, 0);
+        if (front == "down right") { 
+            frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
+            icon.move(tilesize/frames_to_finish_movement, tilesize/frames_to_finish_movement);
         }
+
         movement_frame_counter++;
         if (movement_frame_counter == frames_to_finish_movement) {
             movement_queue.erase(movement_queue.begin());
@@ -105,54 +108,112 @@ void Player::update_view(float dt, sf::View* v) {
 }
 
 void Player::queue(sf::String movement) {
+    bool movement_queued = false;
+
     if (movement_queue.size() == 1) {
         sf::String front = movement_queue.front();
-        if (movement == "up" && front != "up" && movement != "down") {
+        if (movement == "up" && front != "up") {
             movement_queue.push_back(movement);
             evacuate(current_row, current_column);
             current_row--;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
-        if (movement == "left" && front != "left" && movement != "right") {
+        if (movement == "left" && front != "left") {
             movement_queue.push_back(movement);
             evacuate(current_row, current_column);
             current_column--;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
-        if (movement == "down" && front != "down" && movement != "up") {
+        if (movement == "down" && front != "down") {
             movement_queue.push_back(movement);
             evacuate(current_row, current_column);
             current_row++;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
-        if (movement == "right" && front != "right" && movement != "left") {
+        if (movement == "right" && front != "right") {
             movement_queue.push_back(movement);
             evacuate(current_row, current_column);
             current_column++;
-            occupy(current_row, current_column);
+            movement_queued = true;
+        }
+        if (movement == "up left" && front != "up left") {
+            movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
+            current_row--;
+            current_column--;
+            movement_queued = true;
+        }
+        if (movement == "up right" && front != "up right") {
+            movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
+            current_row--;
+            current_column++;
+            movement_queued = true;
+        }
+        if (movement == "down left" && front != "down left") {
+            movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
+            current_row++;
+            current_column--;
+            movement_queued = true;
+        }
+        if (movement == "down right" && front != "down right") {
+            movement_queue.push_back(movement);
+            evacuate(current_row, current_column);
+            current_row++;
+            current_column++;
+            movement_queued = true;
         }
     } else if (movement_queue.empty()) {
         movement_queue.push_back(movement);
         if (movement == "up") {
             evacuate(current_row, current_column);
             current_row--;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
         if (movement == "left") {
             evacuate(current_row, current_column);
             current_column--;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
         if (movement == "down") {
             evacuate(current_row, current_column);
             current_row++;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
         if (movement == "right") {
             evacuate(current_row, current_column);
             current_column++;
-            occupy(current_row, current_column);
+            movement_queued = true;
         }
+        if (movement == "up left") {
+            evacuate(current_row, current_column);
+            current_row--;
+            current_column--;
+            movement_queued = true;
+        }
+        if (movement == "up right") {
+            evacuate(current_row, current_column);
+            current_row--;
+            current_column++;
+            movement_queued = true;
+        }
+        if (movement == "down left") {
+            evacuate(current_row, current_column);
+            current_row++;
+            current_column--;
+            movement_queued = true;
+        }
+        if (movement == "down right") {
+            evacuate(current_row, current_column);
+            current_row++;
+            current_column++;
+            movement_queued = true;
+        }
+    }
+
+    if (movement_queued) {
+        occupy(current_row, current_column);
     }
 }
 
