@@ -10,6 +10,7 @@ void Player::initialize() {
         icon.setOrigin(half_text_size + local_text_position);
         icon.setFillColor(sf::Color::White);
     } else { std::cout << "player font failed to load" << std::endl; }
+    
     place(5, 5);
 }
 

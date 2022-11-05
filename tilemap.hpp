@@ -6,7 +6,7 @@
 
 #include "observer.hpp"
 
-class Tilemap : public Observer {
+class Tilemap : public Tile_Observer {
 
     public:
 

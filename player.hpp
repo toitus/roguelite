@@ -6,7 +6,7 @@
 
 #include "subject.hpp"
 
-class Player : public Subject {
+class Player : public Tile_Subject {
 
     public:
 

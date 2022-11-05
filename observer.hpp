@@ -1,6 +1,6 @@
 #pragma once
 
-class Observer {
+class Tile_Observer {
     public:
         virtual void occupy(int r, int c) = 0;
         virtual void evacuate(int r, int c) = 0;
