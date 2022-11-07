@@ -42,12 +42,12 @@ void Tilemap::draw(sf::RenderWindow* w) {
 
 void Tilemap::occupy(int r, int c) {
     tiles[r][c].second = false;
-    std::cout << "occupying " << r << " " << c << std::endl;
+    //std::cout << "occupying " << r << " " << c << std::endl;
 }
 
 void Tilemap::evacuate(int r, int c) {
     tiles[r][c].second = true;
-    std::cout << "evacuating " << r << " " << c << std::endl;
+    //std::cout << "evacuating " << r << " " << c << std::endl;
 }
 
 bool Tilemap::is_walkable(int r, int c) {
