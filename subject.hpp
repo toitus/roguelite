@@ -9,9 +9,9 @@ class Tile_Subject {
     public:
 
         void set_tilemap(Tile_Observer* obs) { tilemap = obs; }
-        void occupy(int r, int c) { tilemap->occupy(r, c); }
-        void evacuate(int r, int c) { tilemap->evacuate(r, c); }
-        bool is_walkable(int r, int c) { return tilemap->is_walkable(r, c); }
+        void occupy_tile(sf::Vector2i t) { tilemap->occupy(t.x, t.y); }
+        void evacuate_tile(sf::Vector2i t) { tilemap->evacuate(t.x, t.y); }
+        bool is_tile_walkable(sf::Vector2i t) { return tilemap->is_tile_walkable(t.x, t.y); }
 
     private:
 

@@ -19,12 +19,15 @@ class Tilemap : public Tile_Observer {
 
         void occupy(int r, int c);
         void evacuate(int r, int c);
-        bool is_walkable(int r, int c);
+        bool is_tile_walkable(int r, int c);
 
         int rows() { return map_rows; }
         int columns() { return map_columns; }
         int height() { return map_rows * tilesize; }
         int width() { return map_columns * tilesize; }
+
+        sf::Vector2i entrance() { return map_entrance; }
+        sf::Vector2i exit() { return map_exit; }
 
         void generate_cellular_cave();
 
@@ -37,7 +40,7 @@ class Tilemap : public Tile_Observer {
 
         sf::Font tilemap_font;
 
-        bool fog_enabled = true; //for testing
+        bool fog_enabled = true; //testing
 
         sf::Vector2f fog_center;
         float fog_radius = 500;
@@ -47,7 +50,13 @@ class Tilemap : public Tile_Observer {
 
         std::vector<std::vector<int>> cavern_ids;
         std::vector<std::vector<sf::Vector2i>> caverns;
+        int largest_cavern_index = 0;
 
         std::vector<sf::Vector2i> flood_cavern(int r, int c);
+
+        void center_tile_text(int r, int c);
+
+        sf::Vector2i map_entrance;
+        sf::Vector2i map_exit;
 
 };

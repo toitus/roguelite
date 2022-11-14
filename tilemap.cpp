@@ -14,12 +14,13 @@ void Tilemap::initialize() {
                 tiles[r][c].second = false;
             }  
         }
+        generate_cellular_cave();
     } else { std::cout << "tilemap font failed to load" << std::endl; }
 }
 
 void Tilemap::events(sf::Event* e) {
     if (e->type == sf::Event::KeyPressed) { 
-        if (e->key.code == sf::Keyboard::F) { fog_enabled = !fog_enabled; } //for testing
+        if (e->key.code == sf::Keyboard::F) { fog_enabled = !fog_enabled; } //testing
     }
 }
 
@@ -42,15 +43,13 @@ void Tilemap::draw(sf::RenderWindow* w) {
 
 void Tilemap::occupy(int r, int c) {
     tiles[r][c].second = false;
-    //std::cout << "occupying " << r << " " << c << std::endl;
 }
 
 void Tilemap::evacuate(int r, int c) {
     tiles[r][c].second = true;
-    //std::cout << "evacuating " << r << " " << c << std::endl;
 }
 
-bool Tilemap::is_walkable(int r, int c) {
+bool Tilemap::is_tile_walkable(int r, int c) {
     return tiles[r][c].second;
 }
 
@@ -120,30 +119,36 @@ void Tilemap::generate_cellular_cave() {
                 }
             }
 
-            //centers text inside its tile
-            sf::Vector2f half_text_size = sf::Vector2f(
-                tiles[r][c].first.getGlobalBounds().width/2, tiles[r][c].first.getGlobalBounds().height/2
-            );
-
-            sf::Vector2f local_text_position = sf::Vector2f(
-                tiles[r][c].first.getLocalBounds().left, tiles[r][c].first.getLocalBounds().top
-            );
-
-            tiles[r][c].first.setOrigin(half_text_size + local_text_position);
-
-            tiles[r][c].first.setPosition(c*tilesize + tilesize/2, r*tilesize + tilesize/2);
+            center_tile_text(r, c);
 
         }
     }
 
     //flood flill caverns to populate caverns vector
-    for (int r = 1; r < map_rows-1; ++r) {
-        for (int c = 1; c < map_columns; ++c) {
+    for (int r = 0; r < map_rows; ++r) {
+        for (int c = 0; c < map_columns; ++c) {
             if (cavern_ids[r][c] == 0) {
                 caverns.push_back(flood_cavern(r, c));
             }
         }
     }
+
+    //the entrance and the exit of the cave will always be inside the largest cavern
+    for (int i = 0; i < caverns.size(); ++i) {
+        int current_cavern_size = caverns[i].size();
+        if (current_cavern_size > caverns[largest_cavern_index].size()) {
+            largest_cavern_index = i;
+        }
+    }
+
+    int random_entrance_index = rand() % caverns[largest_cavern_index].size();
+    int random_exit_index = rand() % caverns[largest_cavern_index].size();
+    map_entrance = caverns[largest_cavern_index][random_entrance_index];
+    map_exit = caverns[largest_cavern_index][random_exit_index];
+
+    tiles[map_exit.x][map_exit.y].first.setString("e");
+    tiles[map_exit.x][map_exit.y].first.setFillColor(sf::Color::White);
+    center_tile_text(map_exit.x, map_exit.y);
 
 }
 
@@ -171,4 +176,19 @@ std::vector<sf::Vector2i> Tilemap::flood_cavern(int r, int c) {
     }
     map_caverns++;
     return cavern;
+}
+
+//centers text inside its tile
+void Tilemap::center_tile_text(int r, int c) { 
+
+    sf::Vector2f half_text_size = sf::Vector2f(
+        tiles[r][c].first.getGlobalBounds().width/2, tiles[r][c].first.getGlobalBounds().height/2
+    );
+
+    sf::Vector2f local_text_position = sf::Vector2f(
+        tiles[r][c].first.getLocalBounds().left, tiles[r][c].first.getLocalBounds().top
+    );
+
+    tiles[r][c].first.setOrigin(half_text_size + local_text_position);
+    tiles[r][c].first.setPosition(c*tilesize + tilesize/2, r*tilesize + tilesize/2);
 }

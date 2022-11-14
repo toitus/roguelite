@@ -7,14 +7,15 @@ Game::Game(sf::RenderWindow* w) {
     //if (!game_font.loadFromFile(" ")) { std::cout << " failed to load" << std::endl; }
 
     tilemap.initialize();
+
     player.initialize();
     player.set_tilemap(&tilemap);
+    player.set_position(tilemap.entrance());
 
-    view_center = player.center();
+    view_center = player.sprite_position();
     view_size = sf::Vector2f(window->getSize().x, window->getSize().y);
     view = sf::View(view_center, view_size);
     view.zoom(zoom);
-
 }
 
 void Game::run() {
@@ -51,10 +52,9 @@ void Game::events() {
 
             if (event.type == sf::Event::KeyPressed) {
                 if (event.key.code == sf::Keyboard::Space) {
-                    tilemap.generate_cellular_cave();
+                
                 }
             }
-
             player.events(&event);
             tilemap.events(&event);
         }
@@ -63,14 +63,19 @@ void Game::events() {
 }
 
 void Game::update() {
-    tilemap.update(player.center());
     player.update(target_step_time.asSeconds(), &view);
+    tilemap.update(player.sprite_position());
+
+    if (player.position() == tilemap.exit() && !player.moving()) {
+        tilemap.generate_cellular_cave();
+        player.set_position(tilemap.entrance());
+    }
 }
 
 void Game::draw() {
     window->clear(sf::Color::Black);
-    window->setView(view);
-    tilemap.draw(window);
-    player.draw(window);
+        window->setView(view);
+        tilemap.draw(window);
+        player.draw(window);
     window->display();
 }

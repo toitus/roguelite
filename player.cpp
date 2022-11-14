@@ -10,8 +10,6 @@ void Player::initialize() {
         icon.setOrigin(half_text_size + local_text_position);
         icon.setFillColor(sf::Color::White);
     } else { std::cout << "player font failed to load" << std::endl; }
-    
-    place(5, 5);
 }
 
 void Player::events(sf::Event* e) {
@@ -19,7 +17,7 @@ void Player::events(sf::Event* e) {
 }
 
 void Player::update(float dt, sf::View* v) {
-    listen_for_movement_input();
+    listen_for_movement_input(); 
     apply_queued_movement();
     update_view(dt, v);
 }
@@ -28,61 +26,50 @@ void Player::draw(sf::RenderWindow* w) {
     w->draw(icon);
 }
 
-void Player::place(int r, int c) {
-    current_row = r;
-    current_column = c; 
-    icon.setPosition(
-        c*tilesize + tilesize/2,
-        r*tilesize + tilesize/2
-    );
-}
-
 void Player::listen_for_movement_input() {
-    bool up = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
-    bool left = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
-    bool down = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::X);
-    bool right = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
+    bool w = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+    bool a = sf::Keyboard::isKeyPressed(sf::Keyboard::A);
+    bool s = sf::Keyboard::isKeyPressed(sf::Keyboard::S) || sf::Keyboard::isKeyPressed(sf::Keyboard::X);
+    bool d = sf::Keyboard::isKeyPressed(sf::Keyboard::D);
 
-    bool up_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
-    bool up_right = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
-    bool down_left = sf::Keyboard::isKeyPressed(sf::Keyboard::Z);
-    bool down_right = sf::Keyboard::isKeyPressed(sf::Keyboard::C);
+    bool q = sf::Keyboard::isKeyPressed(sf::Keyboard::Q);
+    bool e = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
+    bool z = sf::Keyboard::isKeyPressed(sf::Keyboard::Z);
+    bool c = sf::Keyboard::isKeyPressed(sf::Keyboard::C);
 
-    int r = current_row;
-    int c = current_column;
-
-    if (up && is_walkable(r-1, c)) { queue("up"); }
-    if (left && is_walkable(r, c-1)) { queue("left"); }
-    if (down && is_walkable(r+1, c)) { queue("down"); }
-    if (right && is_walkable(r, c+1)) { queue("right"); }
-    if (up_left && is_walkable(r-1, c-1)) { queue("up left"); }
-    if (up_right && is_walkable(r-1, c+1)) { queue("up right"); }
-    if (down_left && is_walkable(r+1, c-1)) { queue("down left"); }
-    if (down_right && is_walkable(r+1, c+1)) { queue("down right"); }
+    if (w && is_tile_walkable(current_position + up)) { queue(up); }
+    if (a && is_tile_walkable(current_position + left)) { queue(left); }
+    if (s && is_tile_walkable(current_position + down)) { queue(down); }
+    if (d && is_tile_walkable(current_position + right)) { queue(right); }
+    if (q && is_tile_walkable(current_position + up_left)) { queue(up_left); }
+    if (e && is_tile_walkable(current_position + up_right)) { queue(up_right); }
+    if (z && is_tile_walkable(current_position + down_left)) { queue(down_left); }
+    if (c && is_tile_walkable(current_position + down_right)) { queue(down_right); }
 }
 
 void Player::apply_queued_movement() {
     if (movement_queue.size() > 0) {
-        sf::String front = movement_queue.front();
+        is_moving = true;
+        sf::Vector2i front = movement_queue.front();
         frames_to_finish_movement = movement_speed;
-        if (front == "up") { icon.move(0, -tilesize/frames_to_finish_movement); }
-        if (front == "left") { icon.move(-tilesize/frames_to_finish_movement, 0); }
-        if (front == "down") { icon.move(0, tilesize/frames_to_finish_movement); }
-        if (front == "right") { icon.move(tilesize/frames_to_finish_movement, 0); }
+        if (front == up) { icon.move(0, -tilesize/frames_to_finish_movement); }
+        if (front == left) { icon.move(-tilesize/frames_to_finish_movement, 0); }
+        if (front == down) { icon.move(0, tilesize/frames_to_finish_movement); }
+        if (front == right) { icon.move(tilesize/frames_to_finish_movement, 0); }
 
-        if (front == "up left") { 
+        if (front == up_left) { 
             frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
             icon.move(-tilesize/frames_to_finish_movement, -tilesize/frames_to_finish_movement);
         }
-        if (front == "up right") { 
+        if (front == up_right) { 
             frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
             icon.move(tilesize/frames_to_finish_movement, -tilesize/frames_to_finish_movement);
         }
-        if (front == "down left") { 
+        if (front == down_left) { 
             frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
             icon.move(-tilesize/frames_to_finish_movement, tilesize/frames_to_finish_movement);
         }
-        if (front == "down right") { 
+        if (front == down_right) { 
             frames_to_finish_movement = ceil(movement_speed*sqrt(2)); 
             icon.move(tilesize/frames_to_finish_movement, tilesize/frames_to_finish_movement);
         }
@@ -92,7 +79,7 @@ void Player::apply_queued_movement() {
             movement_queue.erase(movement_queue.begin());
             movement_frame_counter = 0;
         }
-    }
+    } else { is_moving = false; }
 }
 
 void Player::update_view(float dt, sf::View* v) {
@@ -108,116 +95,18 @@ void Player::update_view(float dt, sf::View* v) {
     }
 }
 
-void Player::queue(sf::String movement) {
-    bool movement_queued = false;
-
-    if (movement_queue.size() == 1) {
-        sf::String front = movement_queue.front();
-        if (movement == "up" && front != "up") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row--;
-            movement_queued = true;
-        }
-        if (movement == "left" && front != "left") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "down" && front != "down") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row++;
-            movement_queued = true;
-        }
-        if (movement == "right" && front != "right") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_column++;
-            movement_queued = true;
-        }
-        if (movement == "up left" && front != "up left") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row--;
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "up right" && front != "up right") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row--;
-            current_column++;
-            movement_queued = true;
-        }
-        if (movement == "down left" && front != "down left") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row++;
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "down right" && front != "down right") {
-            movement_queue.push_back(movement);
-            evacuate(current_row, current_column);
-            current_row++;
-            current_column++;
-            movement_queued = true;
-        }
-    } else if (movement_queue.empty()) {
+void Player::queue(sf::Vector2i movement) {
+    if (movement_queue.empty() || (movement_queue.size() == 1 && movement_queue.front() != movement)) {
         movement_queue.push_back(movement);
-        if (movement == "up") {
-            evacuate(current_row, current_column);
-            current_row--;
-            movement_queued = true;
-        }
-        if (movement == "left") {
-            evacuate(current_row, current_column);
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "down") {
-            evacuate(current_row, current_column);
-            current_row++;
-            movement_queued = true;
-        }
-        if (movement == "right") {
-            evacuate(current_row, current_column);
-            current_column++;
-            movement_queued = true;
-        }
-        if (movement == "up left") {
-            evacuate(current_row, current_column);
-            current_row--;
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "up right") {
-            evacuate(current_row, current_column);
-            current_row--;
-            current_column++;
-            movement_queued = true;
-        }
-        if (movement == "down left") {
-            evacuate(current_row, current_column);
-            current_row++;
-            current_column--;
-            movement_queued = true;
-        }
-        if (movement == "down right") {
-            evacuate(current_row, current_column);
-            current_row++;
-            current_column++;
-            movement_queued = true;
-        }
-    }
-
-    if (movement_queued) {
-        occupy(current_row, current_column);
+        evacuate_tile(current_position);
+        current_position += movement;
+        occupy_tile(current_position);
+        std::cout << "occupying: " << current_position.x << " " << current_position.y << std::endl;
     }
 }
 
-sf::Vector2f Player::center() {
-    return icon.getPosition();
+void Player::set_position(sf::Vector2i p) {
+    current_position = p;
+    icon.setPosition(current_position.y*tilesize + tilesize/2, current_position.x*tilesize + tilesize/2);
+    occupy_tile(current_position);
 }
