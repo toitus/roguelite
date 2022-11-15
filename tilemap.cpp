@@ -133,22 +133,7 @@ void Tilemap::generate_cellular_cave() {
         }
     }
 
-    //the entrance and the exit of the cave will always be inside the largest cavern
-    for (int i = 0; i < caverns.size(); ++i) {
-        int current_cavern_size = caverns[i].size();
-        if (current_cavern_size > caverns[largest_cavern_index].size()) {
-            largest_cavern_index = i;
-        }
-    }
-
-    int random_entrance_index = rand() % caverns[largest_cavern_index].size();
-    int random_exit_index = rand() % caverns[largest_cavern_index].size();
-    map_entrance = caverns[largest_cavern_index][random_entrance_index];
-    map_exit = caverns[largest_cavern_index][random_exit_index];
-
-    tiles[map_exit.x][map_exit.y].first.setString("e");
-    tiles[map_exit.x][map_exit.y].first.setFillColor(sf::Color::White);
-    center_tile_text(map_exit.x, map_exit.y);
+    randomize_entrance_and_exit();
 
 }
 
@@ -191,4 +176,23 @@ void Tilemap::center_tile_text(int r, int c) {
 
     tiles[r][c].first.setOrigin(half_text_size + local_text_position);
     tiles[r][c].first.setPosition(c*tilesize + tilesize/2, r*tilesize + tilesize/2);
+}
+
+void Tilemap::randomize_entrance_and_exit() {
+    //the entrance and the exit of the cave will always be inside the largest cavern
+    for (int i = 0; i < caverns.size(); ++i) {
+        int current_cavern_size = caverns[i].size();
+        if (current_cavern_size > caverns[largest_cavern_index].size()) {
+            largest_cavern_index = i;
+        }
+    }
+
+    int random_entrance_index = rand() % caverns[largest_cavern_index].size();
+    int random_exit_index = rand() % caverns[largest_cavern_index].size();
+    map_entrance = caverns[largest_cavern_index][random_entrance_index];
+    map_exit = caverns[largest_cavern_index][random_exit_index];
+
+    tiles[map_exit.x][map_exit.y].first.setString("e");
+    tiles[map_exit.x][map_exit.y].first.setFillColor(sf::Color::White);
+    center_tile_text(map_exit.x, map_exit.y);
 }

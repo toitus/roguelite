@@ -56,6 +56,7 @@ class Tilemap : public Tile_Observer {
 
         void center_tile_text(int r, int c);
 
+        void randomize_entrance_and_exit();
         sf::Vector2i map_entrance;
         sf::Vector2i map_exit;
 
