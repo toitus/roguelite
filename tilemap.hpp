@@ -33,7 +33,7 @@ class Tilemap : public Tile_Observer {
 
     private:
 
-        int tilesize = 48;
+        int tilesize = 40;
         int map_rows = 60;
         int map_columns = 60;
         int map_caverns = 1;

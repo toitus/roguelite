@@ -83,6 +83,7 @@ void Player::apply_queued_movement() {
 
 //update this and make camera have it's own tile position (?)
 //currently has weird stopping points that only update on next move
+//base camera speed on movement speed (?)
 void Player::update_view(float dt, sf::View* v) {
     sf::Vector2f player = icon.getPosition();
     sf::Vector2f center = v->getCenter();

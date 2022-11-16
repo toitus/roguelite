@@ -31,7 +31,7 @@ class Player : public Tile_Subject {
 
         sf::Vector2i current_position = sf::Vector2i(-1, -1);
 
-        int tilesize = 48;
+        int tilesize = 40;
 
         sf::Font player_font;
         sf::Text icon;
