@@ -21,15 +21,13 @@ class Player : public Tile_Subject {
         void apply_queued_movement();
         void queue(sf::Vector2i movement);
 
-        bool moving() { return is_moving; }
+        bool moving() { return movement_queue.size() > 0; }
 
         void events(sf::Event* e);
         void update(float dt, sf::View* v);
         void draw(sf::RenderWindow* w);
 
     private:
-
-        bool is_moving = false;
 
         sf::Vector2i current_position = sf::Vector2i(-1, -1);
 

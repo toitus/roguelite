@@ -49,7 +49,7 @@ void Player::listen_for_movement_input() {
 
 void Player::apply_queued_movement() {
     if (movement_queue.size() > 0) {
-        is_moving = true;
+        //is_moving = true;
         sf::Vector2i front = movement_queue.front();
         frames_to_finish_movement = movement_speed;
         if (front == up) { icon.move(0, -tilesize/frames_to_finish_movement); }
@@ -79,7 +79,7 @@ void Player::apply_queued_movement() {
             movement_queue.erase(movement_queue.begin());
             movement_frame_counter = 0;
         }
-    } else { is_moving = false; }
+    } //else { is_moving = false; }
 }
 
 void Player::update_view(float dt, sf::View* v) {
