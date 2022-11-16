@@ -24,19 +24,20 @@ void Tilemap::events(sf::Event* e) {
     }
 }
 
-void Tilemap::update(sf::Vector2f player_center) {
-    fog_center = player_center;
+void Tilemap::update(sf::Vector2i player_pos) {
+    player_position = player_pos;
 }
 
 void Tilemap::draw(sf::RenderWindow* w) {
     for (int r = 0; r < map_rows; ++r) {
         for (int c = 0; c < map_columns; ++c) {
             if (fog_enabled) {
-                sf::Vector2f tile_center = tiles[r][c].first.getPosition();
-                sf::Vector2f difference = fog_center - tile_center;
-                float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
+                sf::Vector2i difference = player_position - sf::Vector2i(r, c);
+                int length = difference.x * difference.x + difference.y * difference.y;
                 if (length < fog_radius) { w->draw(tiles[r][c].first); }
-            } else { w->draw(tiles[r][c].first); }
+            } else { 
+                w->draw(tiles[r][c].first); 
+            }
         }
     }
 }
@@ -192,7 +193,8 @@ void Tilemap::randomize_entrance_and_exit() {
     map_entrance = caverns[largest_cavern_index][random_entrance_index];
     map_exit = caverns[largest_cavern_index][random_exit_index];
 
-    tiles[map_exit.x][map_exit.y].first.setString("e");
+    tiles[map_exit.x][map_exit.y].first.setString("E");
+    tiles[map_exit.x][map_exit.y].first.setCharacterSize(32);
     tiles[map_exit.x][map_exit.y].first.setFillColor(sf::Color::White);
     center_tile_text(map_exit.x, map_exit.y);
 }

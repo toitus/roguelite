@@ -14,7 +14,7 @@ class Tilemap : public Tile_Observer {
 
         void initialize();
         void events(sf::Event* e);
-        void update(sf::Vector2f player_center);
+        void update(sf::Vector2i player_center);
         void draw(sf::RenderWindow* w);
 
         void occupy(int r, int c);
@@ -33,7 +33,7 @@ class Tilemap : public Tile_Observer {
 
     private:
 
-        int tilesize = 45;
+        int tilesize = 48;
         int map_rows = 60;
         int map_columns = 60;
         int map_caverns = 1;
@@ -42,8 +42,8 @@ class Tilemap : public Tile_Observer {
 
         bool fog_enabled = true; //testing
 
-        sf::Vector2f fog_center;
-        float fog_radius = 500;
+        sf::Vector2i player_position;
+        float fog_radius = 130;
 
         //bool determines if a tile is walkable
         std::vector<std::vector<std::pair<sf::Text, bool>>> tiles;

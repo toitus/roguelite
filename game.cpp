@@ -64,7 +64,7 @@ void Game::events() {
 
 void Game::update() {
     player.update(target_step_time.asSeconds(), &view);
-    tilemap.update(player.sprite_position());
+    tilemap.update(player.position());
 
     if (player.position() == tilemap.exit() && !player.moving()) {
         tilemap.generate_cellular_cave();

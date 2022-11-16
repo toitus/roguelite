@@ -49,7 +49,6 @@ void Player::listen_for_movement_input() {
 
 void Player::apply_queued_movement() {
     if (movement_queue.size() > 0) {
-        //is_moving = true;
         sf::Vector2i front = movement_queue.front();
         frames_to_finish_movement = movement_speed;
         if (front == up) { icon.move(0, -tilesize/frames_to_finish_movement); }
@@ -79,9 +78,11 @@ void Player::apply_queued_movement() {
             movement_queue.erase(movement_queue.begin());
             movement_frame_counter = 0;
         }
-    } //else { is_moving = false; }
+    }
 }
 
+//update this and make camera have it's own tile position (?)
+//currently has weird stopping points that only update on next move
 void Player::update_view(float dt, sf::View* v) {
     sf::Vector2f player = icon.getPosition();
     sf::Vector2f center = v->getCenter();
