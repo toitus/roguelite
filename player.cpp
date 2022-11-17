@@ -81,20 +81,13 @@ void Player::apply_queued_movement() {
     }
 }
 
-//update this and make camera have it's own tile position (?)
-//currently has weird stopping points that only update on next move
-//base camera speed on movement speed (?)
 void Player::update_view(float dt, sf::View* v) {
     sf::Vector2f player = icon.getPosition();
     sf::Vector2f center = v->getCenter();
     sf::Vector2f difference = player - center;
-    float length = sqrt(pow(difference.x, 2) + pow(difference.y, 2));
-    float speed = 5;
-    if (length < 25 && movement_queue.size() == 0) speed = 8;
-    if (length > 8) {
-        sf::Vector2f camera_move = difference * dt * speed;
-        v->move(camera_move);
-    }
+    float speed = 2.5f;
+    sf::Vector2f camera_move = difference * dt * speed;
+    v->move(camera_move);
 }
 
 void Player::queue(sf::Vector2i movement) {
@@ -103,7 +96,6 @@ void Player::queue(sf::Vector2i movement) {
         evacuate_tile(current_position);
         current_position += movement;
         occupy_tile(current_position);
-        std::cout << "occupying: " << current_position.x << " " << current_position.y << std::endl;
     }
 }
 
