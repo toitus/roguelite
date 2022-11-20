@@ -43,7 +43,7 @@ class Tilemap : public Tile_Observer {
         bool fog_enabled = true; //testing
 
         sf::Vector2i player_position;
-        float fog_radius = 144;
+        float fog_radius = 121;
 
         struct Tile {
             sf::Text string;
