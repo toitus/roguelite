@@ -85,7 +85,7 @@ void Player::update_view(float dt, sf::View* v) {
     sf::Vector2f player = icon.getPosition();
     sf::Vector2f center = v->getCenter();
     sf::Vector2f difference = player - center;
-    float speed = 2.5f;
+    float speed = 3.0f;
     sf::Vector2f camera_move = difference * dt * speed;
     v->move(camera_move);
 }

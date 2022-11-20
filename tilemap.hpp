@@ -43,14 +43,17 @@ class Tilemap : public Tile_Observer {
         bool fog_enabled = true; //testing
 
         sf::Vector2i player_position;
-        float fog_radius = 130;
+        float fog_radius = 144;
 
-        //bool determines if a tile is walkable
-        std::vector<std::vector<std::pair<sf::Text, bool>>> tiles;
+        struct Tile {
+            sf::Text string;
+            bool walkable;
+            int cavern;
+        };
 
-        std::vector<std::vector<int>> cavern_ids;
+        std::vector<std::vector<Tile>> tiles;
+
         std::vector<std::vector<sf::Vector2i>> caverns;
-        int largest_cavern_index = 0;
 
         std::vector<sf::Vector2i> flood_cavern(int r, int c);
 
