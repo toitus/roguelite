@@ -33,7 +33,7 @@ class Player : public Tile_Subject {
 
         int tilesize = 40;
 
-        sf::Font player_font;
+        sf::Font font;
         sf::Text icon;
         sf::View view;
 

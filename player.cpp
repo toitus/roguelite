@@ -1,8 +1,8 @@
 #include "player.hpp"
 
 void Player::initialize() {
-    if (player_font.loadFromFile("content/player_font.otf")) {
-        icon.setFont(player_font);
+    if (font.loadFromFile("content/player_font.otf")) {
+        icon.setFont(font);
         icon.setString("*");
         icon.setCharacterSize(tilesize);
         sf::Vector2f half_text_size = sf::Vector2f(icon.getGlobalBounds().width/2, icon.getGlobalBounds().height/2);

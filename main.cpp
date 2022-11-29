@@ -9,7 +9,7 @@ int main() {
 
     srand(time(NULL));
 
-    sf::RenderWindow window(sf::VideoMode(1366, 768, sf::VideoMode::getDesktopMode().bitsPerPixel), "Roguelite");
+    sf::RenderWindow window(sf::VideoMode(1600, 900, sf::VideoMode::getDesktopMode().bitsPerPixel), "Roguelite");
 
     Game game (&window);
 

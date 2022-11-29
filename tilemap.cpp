@@ -10,8 +10,6 @@ void Tilemap::initialize() {
             for (int c = 0; c < map_columns; ++c) {
                 tiles[r][c].string.setFont(tilemap_font);
                 tiles[r][c].string.setCharacterSize(tilesize);
-                tiles[r][c].walkable = false;
-                tiles[r][c].cavern = -1;
             }  
         }
         generate_cellular_cave();

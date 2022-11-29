@@ -14,7 +14,7 @@ class Tilemap : public Tile_Observer {
 
         void initialize();
         void events(sf::Event* e);
-        void update(sf::Vector2i player_center);
+        void update(sf::Vector2i player_pos);
         void draw(sf::RenderWindow* w);
 
         void occupy(int r, int c);
